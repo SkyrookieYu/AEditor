@@ -22,7 +22,7 @@ class NewOrOpen(QMainWindow):
     def __init__(self):
         super(NewOrOpen, self).__init__()
 
-        QMainWindow.__init__(self)
+        # QMainWindow.__init__(self)
         self.ui = Ui_NewOrOpen()
         self.ui.setupUi(self)
         self._translate = QCoreApplication.translate
@@ -60,7 +60,10 @@ class NewOrOpen(QMainWindow):
     def open(self):
         # QMessageBox.information(self, self._translate("NewOrOpen", "Hint!"), self._translate("NewOrOpen", "Open !"), QMessageBox.Ok)      
         filename, filetype = QFileDialog.getOpenFileName(self, self._translate("NewOrOpen", "Select a book"), "./", self._translate("NewOrOpen", "Audiobooks(*.lpf)"))
-        print(filename)
+        if len(filename) > 0: 
+            print(filename)
+        else:
+            return
         if filename in self.recentFilesInSettings and self.recentFilesInSettings.index(filename) == 0:
             return
         self.updateSettings(filename)

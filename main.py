@@ -22,6 +22,9 @@ from neworopen import NewOrOpen
 ## ==> NEW OR OPEN
 from newbookwizard import NewBookWizard
 
+## ==> MAINWINDOW
+from mainwindow import MainWindow
+
 ## ==> GLOBALS
 counter = 0
 
@@ -125,6 +128,11 @@ if __name__ == "__main__":
     # newOrOpen.show()
     # newBookWizard = NewBookWizard()
     # newBookWizard.show()
-    controller = Controller()
-    controller.show_LaunchPage()    
+    mainWindow = MainWindow()
+    mainWindow.show()
+    
+    
+    
+    # controller = Controller()
+    # controller.show_LaunchPage()    
     sys.exit(app.exec_())
