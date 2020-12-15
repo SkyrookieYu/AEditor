@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>479</width>
+    <width>794</width>
     <height>283</height>
    </rect>
   </property>
@@ -50,7 +50,7 @@ p, li { white-space: pre-wrap; }
     <enum>Qt::Vertical</enum>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>40</x>
@@ -97,9 +97,9 @@ p, li { white-space: pre-wrap; }
   <widget class="QWidget" name="">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>11</y>
-     <width>258</width>
+     <x>211</x>
+     <y>12</y>
+     <width>571</width>
      <height>261</height>
     </rect>
    </property>
@@ -113,7 +113,7 @@ p, li { white-space: pre-wrap; }
        </font>
       </property>
       <property name="text">
-       <string>Recently opened files...</string>
+       <string>Recently opened files:</string>
       </property>
      </widget>
     </item>

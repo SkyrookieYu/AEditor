@@ -17,8 +17,10 @@ from PyQt5.QtWidgets import *
 from ui_launchpage import Ui_LaunchPage
 
 ## ==> NEW OR OPEN
-
 from neworopen import NewOrOpen
+
+## ==> NEW OR OPEN
+from newbookwizard import NewBookWizard
 
 ## ==> GLOBALS
 counter = 0
@@ -94,6 +96,7 @@ class LaunchPage(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     # launchPage = LaunchPage()
-    newOrOpen = NewOrOpen()
-    newOrOpen.show()
+    # launchPage.show()
+    # newOrOpen = NewOrOpen()
+    # newOrOpen.show()
     sys.exit(app.exec_())

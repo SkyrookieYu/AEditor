@@ -39,7 +39,7 @@ class Ui_LaunchPage(object):
         self.label_Title.setAlignment(QtCore.Qt.AlignCenter)
         self.label_Title.setObjectName("label_Title")
         self.label_Description = QtWidgets.QLabel(self.dropShadowFrame)
-        self.label_Description.setGeometry(QtCore.QRect(0, 180, 661, 31))
+        self.label_Description.setGeometry(QtCore.QRect(0, 140, 661, 31))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
         font.setPointSize(14)
@@ -48,7 +48,7 @@ class Ui_LaunchPage(object):
         self.label_Description.setAlignment(QtCore.Qt.AlignCenter)
         self.label_Description.setObjectName("label_Description")
         self.progressBar = QtWidgets.QProgressBar(self.dropShadowFrame)
-        self.progressBar.setGeometry(QtCore.QRect(50, 230, 561, 23))
+        self.progressBar.setGeometry(QtCore.QRect(50, 180, 561, 23))
         self.progressBar.setStyleSheet("QProgressBar {\n"
 "    background-color: rgb(90,90,90);\n"
 "    color: rgb(255, 255, 255);\n"
@@ -64,7 +64,7 @@ class Ui_LaunchPage(object):
         self.progressBar.setAlignment(QtCore.Qt.AlignCenter)
         self.progressBar.setObjectName("progressBar")
         self.label_Loading = QtWidgets.QLabel(self.dropShadowFrame)
-        self.label_Loading.setGeometry(QtCore.QRect(0, 260, 661, 21))
+        self.label_Loading.setGeometry(QtCore.QRect(0, 210, 661, 21))
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
         font.setPointSize(12)
@@ -81,6 +81,11 @@ class Ui_LaunchPage(object):
         self.label_Credits.setStyleSheet("color: rgb(98, 114, 164);")
         self.label_Credits.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_Credits.setObjectName("label_Credits")
+        self.label_Logo = QtWidgets.QLabel(self.dropShadowFrame)
+        self.label_Logo.setGeometry(QtCore.QRect(450, 260, 181, 41))
+        self.label_Logo.setText("")
+        self.label_Logo.setPixmap(QtGui.QPixmap("hyread-footer-logo-pc.png"))
+        self.label_Logo.setObjectName("label_Logo")
         self.verticalLayout.addWidget(self.dropShadowFrame)
         LaunchPage.setCentralWidget(self.centralwidget)
 
