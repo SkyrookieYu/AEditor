@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Dec 14 13:42:40 2020
-
-@author: ilove
-"""
-# -*- coding: utf-8 -*-
-"""
 Created on Mon Dec 14 12:19:51 2020
 
 @URL: https://github.com/SkyrookieYu/AEditor
@@ -19,6 +13,9 @@ from PyQt5.QtWidgets import *
 from ui_neworopen import Ui_NewOrOpen
 
 class NewOrOpen(QMainWindow):
+    
+    switch_window = pyqtSignal()
+    
     MaxRecentFiles = 10
     # windowList = []
 
@@ -28,7 +25,8 @@ class NewOrOpen(QMainWindow):
         QMainWindow.__init__(self)
         self.ui = Ui_NewOrOpen()
         self.ui.setupUi(self)
-
+        self._translate = QCoreApplication.translate
+        
         # self.recentFile = []
         
         self.settings = QSettings("Audiobooks Editor", "NewOrOpen")
@@ -51,12 +49,13 @@ class NewOrOpen(QMainWindow):
         self.ui.button_New.clicked.connect(self.new)
         self.ui.button_Open.clicked.connect(self.open)
         
-        self._translate = QCoreApplication.translate
+        
 
     def new(self):
         # QMessageBox.information(self, self._translate("NewOrOpen", "Hint!"), self._translate("NewOrOpen", "New !"), QMessageBox.Ok)
         saveDirectory = QFileDialog.getExistingDirectory(self, self._translate("NewOrOpen", "Select one directory"), self._translate("NewOrOpen", "./"))
         print(saveDirectory)
+        self.switch_window.emit()
 
     def open(self):
         # QMessageBox.information(self, self._translate("NewOrOpen", "Hint!"), self._translate("NewOrOpen", "Open !"), QMessageBox.Ok)      

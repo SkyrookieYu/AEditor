@@ -28,6 +28,8 @@ counter = 0
 
 # LAUNCH PAGE
 class LaunchPage(QMainWindow):
+    switch_window = pyqtSignal()
+    
     def __init__(self):
         QMainWindow.__init__(self)
         self.ui = Ui_LaunchPage()
@@ -86,12 +88,34 @@ class LaunchPage(QMainWindow):
             # self.main = MainWindow()
             # self.main.show()
 
-            # HIDE LAUNCH PAGE
+            self.switch_window.emit()
+            # CLOSE LAUNCH PAGE
             self.close()
 
         # INCREASE COUNTER
         counter += 1
 
+
+class Controller:
+    
+    def __init__(self):
+        pass
+
+    def show_LaunchPage(self):
+        self.launchPage = LaunchPage()
+        self.launchPage.switch_window.connect(self.show_NewOrOpen)
+        self.launchPage.show()
+
+    def show_NewOrOpen(self):
+        self.newOrOpen = NewOrOpen()
+        self.newOrOpen.switch_window.connect(self.show_NewBookWizard)
+        self.launchPage.close()
+        self.newOrOpen.show()
+
+    def show_NewBookWizard(self):
+        self.newBookWizard = NewBookWizard()
+        self.newOrOpen.close()
+        self.newBookWizard.show()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
@@ -99,4 +123,8 @@ if __name__ == "__main__":
     # launchPage.show()
     # newOrOpen = NewOrOpen()
     # newOrOpen.show()
+    # newBookWizard = NewBookWizard()
+    # newBookWizard.show()
+    controller = Controller()
+    controller.show_LaunchPage()    
     sys.exit(app.exec_())
