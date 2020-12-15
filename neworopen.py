@@ -41,6 +41,13 @@ class NewOrOpen(QMainWindow):
         self.ui.listView.setEditTriggers(QAbstractItemView.NoEditTriggers)    
         self.ui.listView.doubleClicked.connect(self.doubleClicked)
         
+        ''' DRAG AND DROP
+        self.ui.listView.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.ui.listView.setDragEnabled(True)
+        self.ui.listView.setAcceptDrops(True)
+        self.ui.listView.setDropIndicatorShown(True)
+        '''
+        
         self.ui.button_New.clicked.connect(self.new)
         self.ui.button_Open.clicked.connect(self.open)
         
@@ -55,7 +62,7 @@ class NewOrOpen(QMainWindow):
         # QMessageBox.information(self, self._translate("NewOrOpen", "Hint!"), self._translate("NewOrOpen", "Open !"), QMessageBox.Ok)      
         filename, filetype = QFileDialog.getOpenFileName(self, self._translate("NewOrOpen", "Select a book"), "./", self._translate("NewOrOpen", "Audiobooks(*.lpf)"))
         print(filename)
-        if self.recentFilesInSettings.index(filename) == 0:
+        if filename in self.recentFilesInSettings and self.recentFilesInSettings.index(filename) == 0:
             return
         self.updateSettings(filename)
            
@@ -68,7 +75,10 @@ class NewOrOpen(QMainWindow):
      
     def updateSettings(self, filename):
         # filename = self.recentFilesInSettings[qModelIndex.row()]
-
+        slm = QStringListModel()
+        slm.setStringList([])
+        self.ui.listView.setModel(slm)
+        
         try:
             self.recentFilesInSettings.remove(filename)
         except ValueError:
