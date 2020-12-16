@@ -25,6 +25,12 @@ from newbookwizard import NewBookWizard
 ## ==> MAINWINDOW
 from mainwindow import MainWindow
 
+## ==> GROUPS
+from groups import Groups
+
+## ==> GROUPS
+from test import Form
+
 ## ==> GLOBALS
 counter = 0
 
@@ -119,6 +125,17 @@ class Controller:
         self.newBookWizard = NewBookWizard()
         self.newOrOpen.close()
         self.newBookWizard.show()
+        
+    def show_MainWindow(self):
+        self.mainWindow = MainWindow()
+        self.mainWindow.signal_exit.connect(self.exit)
+        if hasattr(self, 'newBookWizard'):
+            self.newBookWizard.close()
+        self.mainWindow.show()
+        
+        
+    def exit(self):
+        QCoreApplication.quit()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
@@ -128,11 +145,16 @@ if __name__ == "__main__":
     # newOrOpen.show()
     # newBookWizard = NewBookWizard()
     # newBookWizard.show()
-    mainWindow = MainWindow()
-    mainWindow.show()
+    # mainWindow = MainWindow()
+    # mainWindow.show()
     
+    # groups = Groups()
+    # groups.show()
     
+    # form = Form()
+    # form.show()
     
-    # controller = Controller()
-    # controller.show_LaunchPage()    
+    controller = Controller()
+    controller.show_MainWindow()    
+    
     sys.exit(app.exec_())
