@@ -3,7 +3,6 @@
 Created on Sat Dec 19 12:01:07 2020
 
 @author: https://gis.stackexchange.com/questions/350148/qcombobox-multiple-selection-pyqt5
-@appendix: 1. 
 @BCP 47: https://appmakers.dev/bcp-47-language-codes-list/
 """
 
