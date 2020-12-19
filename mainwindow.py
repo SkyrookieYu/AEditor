@@ -8,12 +8,9 @@ Created on Mon Dec 14 12:19:51 2020
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-
 from ui_mainwindow import Ui_MainWindow
-from leftdockwidget import LeftDockWidget
-from groups import Groups
+from publicationmanifest import PublicationManifest
 
-from test import Form
 
 class MainWindow(QMainWindow):
     
@@ -30,18 +27,17 @@ class MainWindow(QMainWindow):
 
         self.ui.action_Exit.triggered.connect(self._exit)
         
-        layout = QVBoxLayout()
-        self.form = Form()
-        layout.addWidget(self.form)
+        self.layout = QVBoxLayout()
+        self.publicationManifest = PublicationManifest()
+        self.layout.addWidget(self.publicationManifest)
         # layout.setSizeConstraint(QLayout.SetMinimumSize)
-        self.ui.tab_Metadata.setLayout(layout)
+        self.ui.tab_Metadata.setLayout(self.layout)
         '''
         layout = QVBoxLayout()
         self.groups = Groups()
         layout.addWidget(self.groups)
         '''
-        # layout.setSizeConstraint(QLayout.SetMinimumSize)
-        self.ui.tab_Metadata.setLayout(layout)  
+
         
         
         

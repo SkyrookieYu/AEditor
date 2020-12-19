@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PublicationManifest</class>
+ <widget class="QWidget" name="PublicationManifest">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>574</width>
+    <height>871</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="minimumSize">
+      <size>
+       <width>400</width>
+       <height>800</height>
+      </size>
+     </property>
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>560</width>
+        <height>857</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>400</width>
+        <height>850</height>
+       </size>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>10</y>
+         <width>422</width>
+         <height>808</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QGroupBox" name="groupBox_Required">
+          <property name="minimumSize">
+           <size>
+            <width>420</width>
+            <height>170</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Courier New</family>
+            <pointsize>16</pointsize>
+           </font>
+          </property>
+          <property name="title">
+           <string>Required Metadata</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_name">
+             <property name="font">
+              <font>
+               <family>Courier New</family>
+               <pointsize>16</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>name(publication title)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_conformsTo">
+             <property name="font">
+              <font>
+               <family>Courier New</family>
+               <pointsize>16</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>conformsTo</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_context">
+             <property name="font">
+              <font>
+               <family>Courier New</family>
+               <pointsize>16</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>@context</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0" colspan="2">
+            <widget class="QLineEdit" name="lineEdit_context"/>
+           </item>
+           <item row="3" column="0" colspan="2">
+            <widget class="QLineEdit" name="lineEdit_conformsTo"/>
+           </item>
+           <item row="1" column="0" colspan="2">
+            <widget class="QLineEdit" name="lineEdit_name"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_Optional">
+          <property name="minimumSize">
+           <size>
+            <width>400</width>
+            <height>600</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Courier New</family>
+            <pointsize>16</pointsize>
+           </font>
+          </property>
+          <property name="title">
+           <string>Optional Metadata</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="0">
+            <widget class="QScrollArea" name="scrollArea_2">
+             <property name="minimumSize">
+              <size>
+               <width>400</width>
+               <height>600</height>
+              </size>
+             </property>
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="scrollAreaWidgetContents_2">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>-319</y>
+                <width>600</width>
+                <height>900</height>
+               </rect>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>600</width>
+                <height>900</height>
+               </size>
+              </property>
+              <layout class="QFormLayout" name="formLayout_3">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_abridged">
+                 <property name="text">
+                  <string>abridged</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QComboBox" name="comboBox_abridged">
+                 <item>
+                  <property name="text">
+                   <string>true</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>false</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_accessibilityFeature">
+                 <property name="text">
+                  <string>accessibilityFeature</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_accessibilityFeature"/>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="label_accessibilityHazard">
+                 <property name="text">
+                  <string>accessibilityHazard</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="0" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_accessibilityHazard"/>
+               </item>
+               <item row="6" column="0">
+                <widget class="QLabel" name="label_accessibilitySummary">
+                 <property name="text">
+                  <string>accessibilitySummary</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="0" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_accessibilitySummary"/>
+               </item>
+               <item row="8" column="0">
+                <widget class="QLabel" name="label_accessMode">
+                 <property name="text">
+                  <string>accessMode</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="9" column="0" colspan="2">
+                <widget class="CheckableComboBox" name="comboBox_accessMode">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>227</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="currentText">
+                  <string notr="true">auditory</string>
+                 </property>
+                 <property name="currentIndex">
+                  <number>0</number>
+                 </property>
+                 <property name="maxVisibleItems">
+                  <number>10</number>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>auditory</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>tactile</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>textual</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>visual</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>colorDependent</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>chartOnVisual</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>chemOnVisual</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>diagramOnVisual</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>mathOnVisual</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>musicOnVisual</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string notr="true">textOnVisual</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="10" column="0">
+                <widget class="QLabel" name="label_accessModeSufficient">
+                 <property name="text">
+                  <string>accessModeSufficient</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="11" column="0" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_accessModeSufficient"/>
+               </item>
+               <item row="12" column="0">
+                <widget class="QLabel" name="label_author">
+                 <property name="text">
+                  <string>author</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="13" column="0" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_author"/>
+               </item>
+               <item row="14" column="0">
+                <widget class="QLabel" name="label_cover">
+                 <property name="text">
+                  <string>cover</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="15" column="0" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_cover"/>
+               </item>
+               <item row="16" column="0">
+                <widget class="QLabel" name="label_duration">
+                 <property name="text">
+                  <string>duration</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="17" column="0" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_duration">
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="18" column="0">
+                <widget class="QLabel" name="label_dateModified">
+                 <property name="text">
+                  <string>dateModified</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="19" column="0">
+                <widget class="QDateTimeEdit" name="dateTimeEdit_dateModified"/>
+               </item>
+               <item row="20" column="0">
+                <widget class="QLabel" name="label_datePublished">
+                 <property name="text">
+                  <string>datePublished</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="21" column="0">
+                <widget class="QDateTimeEdit" name="dateTimeEdit_datePublished"/>
+               </item>
+               <item row="22" column="0">
+                <widget class="QLabel" name="label_id">
+                 <property name="text">
+                  <string>id (canonical identifier)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="23" column="0" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_id"/>
+               </item>
+               <item row="24" column="0">
+                <widget class="QLabel" name="label_inLanguage">
+                 <property name="text">
+                  <string>inLanguage (publication language)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="26" column="0">
+                <widget class="QLabel" name="label_readBy">
+                 <property name="text">
+                  <string>readBy</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="27" column="0" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_readBy"/>
+               </item>
+               <item row="28" column="0">
+                <widget class="QLabel" name="label_readingProgression">
+                 <property name="text">
+                  <string>readingProgression</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="29" column="0" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_readingProgression"/>
+               </item>
+               <item row="30" column="0">
+                <widget class="QLabel" name="label_type">
+                 <property name="text">
+                  <string>type</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="31" column="0" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_type">
+                 <property name="text">
+                  <string>CreativeWork</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="32" column="0">
+                <widget class="QLabel" name="label_url">
+                 <property name="text">
+                  <string>url (address)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="33" column="0" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_url"/>
+               </item>
+               <item row="25" column="0" colspan="2">
+                <widget class="QComboBox" name="comboBox">
+                 <property name="currentText">
+                  <string notr="true">zh-TW</string>
+                 </property>
+                 <property name="currentIndex">
+                  <number>36</number>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>ar-SA</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>cs-CZ</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>da-DK</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>de-DE</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>el-GR</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>en-AU</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>en-GB</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>en-IE</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>en-US</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>en-ZA</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>es-ES</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>es-MX</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>fi-FI</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>fr-CA</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>fr-FR</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>he-IL</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>hi-IN</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>hu-HU</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>id-ID</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>it-IT</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ja-JP</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ko-KR</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>nl-BE</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>nl-NL</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>no-NO</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>pl-PL</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>pt-BR</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>pt-PT</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ro-RO</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ru-RU</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>sk-SK</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>sv-SE</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>th-TH</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>tr-TR</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>zh-CN</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>zh-HK</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>zh-TW</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CheckableComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">CheckableComboBox</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

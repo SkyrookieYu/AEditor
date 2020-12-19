@@ -25,12 +25,6 @@ from newbookwizard import NewBookWizard
 ## ==> MAINWINDOW
 from mainwindow import MainWindow
 
-## ==> GROUPS
-from groups import Groups
-
-## ==> GROUPS
-from test import Form
-
 ## ==> GLOBALS
 counter = 0
 
@@ -132,6 +126,13 @@ class Controller:
         if hasattr(self, 'newBookWizard'):
             self.newBookWizard.close()
         self.mainWindow.show()
+        
+    def show_Groups(self):
+        self.groups = Groups()
+        # self.groups.signal_exit.connect(self.exit)
+        if hasattr(self, 'mainWindow'):
+            self.mainWindow.close()
+        self.groups.show()
         
         
     def exit(self):

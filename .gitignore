@@ -3,3 +3,5 @@ l7.01.lpf
 /main.ui
 /__pycache__
 /*.lpf
+/test.py
+/test.ui
