@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Dec 20 00:18:39 2020
+Created on Mon Dec 21 01:15:55 2020
 
 @URL: https://github.com/SkyrookieYu/AEditor
 """
@@ -9,20 +9,21 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from ui_readingorderitem import Ui_ReadingOrderItem
 import librosa
 # from mimetypes import MimeTypes
 import filetype
 
-class ReadingOrderItem(QWidget):
+from ui_supplementalitem import Ui_SupplementalItem
+
+class SupplementalItem(QWidget):
     
     # switch_window = pyqtSignal()
     signal_resize_item = pyqtSignal(int, int, int)
     
     def __init__(self, serialNo=-1):
-        super(ReadingOrderItem, self).__init__()
+        super(SupplementalItem, self).__init__()
 
-        self.ui = Ui_ReadingOrderItem()
+        self.ui = Ui_SupplementalItem()
         self.ui.setupUi(self)
         self._translate = QCoreApplication.translate
         
@@ -31,14 +32,7 @@ class ReadingOrderItem(QWidget):
         self.upDownCount = 0 
         self.upDownSize = self.size()
         
-        
-        
-        # Use pyqtSlot to automatically connect to slots
-        # self.ui.pushButton_UpDown.clicked.connect(self.on_pushButton_UpDown_clicked)
-        # self.ui.pushButton_Browse.clicked.connect(self.on_pushButton_Browse_clicked)
-        
-        # self.ui.radioButton_file.toggled.connect(lambda: self.on_radioButton_Toggled())
-        # self.ui.radioButton_URL.toggled.connect(lambda: self.on_radioButton_Toggled("URL"))
+        self.ui.radioButton_file.toggled.connect(lambda: self.on_radioButton_toggled(self.serialNo()))
         
     def serialNo(self):
         return self.__serialNo
@@ -61,28 +55,31 @@ class ReadingOrderItem(QWidget):
         print("on_pushButton_Browse_clicked")
         pass
     
-    @pyqtSlot()
-    def on_radioButton_file_toggled(self):
-        print("on_radioButton_file_toggled")
-        pass            
+    @pyqtSlot(int)
+    def on_radioButton_toggled(self, serialNo):
+        print("{} on_radioButton_file_toggled".format(serialNo))
+        pass 
+ 
+class SupplementalListWidget(QWidget):
         
-    
-class ReadingOrderWidget(QWidget):
-        
-    def __init__(self, width=400, height=130):
-        super(ReadingOrderWidget, self).__init__()
+    def __init__(self, width=500, height=110):
+        super(SupplementalListWidget, self).__init__()
 
         self.__listWidgetItemSerialNo = 0 # Unique index for 
-        self.resize(QSize(width + 100, height * 5))
+        
+        self.setGeometry(QRect(60, 70, 680, 790))
+        
+        self.resize(QSize(width + 100, height * 6))
+        
         self.setStyleSheet("QListWidget::item { border-bottom: 1px red; }")
         
         self.listWidget = QListWidget(self)
         self.listWidget.setStyleSheet("QListWidget::item { border-bottom: 1px solid black; }")
-    
+        self.listWidget.setDragDropMode(QAbstractItemView.InternalMove)
         self.__itemWidth = width
         self.__itemHeight = height
 
-        layout = QVBoxLayout()  # QGridLayout(self)
+        layout = QVBoxLayout()  # QGridLayout(self)  # 
         
  
         horizontalLayout = QHBoxLayout()
@@ -112,7 +109,7 @@ class ReadingOrderWidget(QWidget):
         self.pushButton_Remove.setFont(font)
         self.pushButton_Remove.setObjectName("pushButton_Remove")
         horizontalLayout.addWidget(self.pushButton_Remove)
-        
+        '''
         self.label_ReadingOrderEditor = QLabel(self)
         self.label_ReadingOrderEditor.setGeometry(QRect(220, 10, 301, 63))
         font = QFont()
@@ -123,29 +120,20 @@ class ReadingOrderWidget(QWidget):
         self.label_ReadingOrderEditor.setObjectName("label_ReadingOrderEditor")
         
         layout.addWidget(self.label_ReadingOrderEditor)
+        '''
         layout.addWidget(self.listWidget)
         layout.addLayout(horizontalLayout)
         
         self.setLayout(layout)
         
-        self.retranslateUi(ReadingOrderWidget)        
-        '''
+        self.retranslateUi(SupplementalListWidget)        
+   
+    def retranslateUi(self, SupplementalListWidget):
         _translate = QCoreApplication.translate
-        self.setWindowTitle(_translate("ReadingOrderWidget", "ReadingOrderWidget"))
-        self.pushButton_Add.setText(_translate("ReadingOrderWidget", "Add"))
-        self.pushButton_Remove.setText(_translate("ReadingOrderWidget", "Remove"))
-        self.label_ReadingOrderEditor.setText(_translate("ReadingOrderWidget", "Reading Order Editor"))        
-        '''
-        
-        
-        
-        
-    def retranslateUi(self, ReadingOrderWidget):
-        _translate = QCoreApplication.translate
-        self.setWindowTitle(_translate("ReadingOrderWidget", "ReadingOrderWidget"))
-        self.pushButton_Add.setText(_translate("ReadingOrderWidget", "Add"))
-        self.pushButton_Remove.setText(_translate("ReadingOrderWidget", "Remove"))
-        self.label_ReadingOrderEditor.setText(_translate("ReadingOrderWidget", "Reading Order Editor"))
+        self.setWindowTitle(_translate("SupplementalListWidget", "SupplementalListWidget"))
+        self.pushButton_Add.setText(_translate("SupplementalListWidget", "Add"))
+        self.pushButton_Remove.setText(_translate("SupplementalListWidget", "Remove"))
+        # self.label_ReadingOrderEditor.setText(_translate("SupplementalListWidget", "Reading Order Editor"))
     
     def getItemSize(self):
         return QSize(self.__itemWidth, self.__itemHeight)
@@ -159,7 +147,7 @@ class ReadingOrderWidget(QWidget):
             item.setText(str(self.listWidget.count()))
             item.setSizeHint(self.getItemSize()) 
             
-            roi = ReadingOrderItem(self.getSerialNo())
+            roi = SupplementalItem(self.getSerialNo())
             roi.signal_resize_item.connect(self.on_signal_resize_item)
               
             self.listWidget.addItem(item)
@@ -178,16 +166,14 @@ class ReadingOrderWidget(QWidget):
             if self.listWidget.itemWidget(self.listWidget.item(i)).serialNo() == serialNo:
                 self.listWidget.item(i).setSizeHint(QSize(width, height)) # (width, height)
         print("item[{}] = {} * {}".format(serialNo, width, height))
-  
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     
-    rOW = ReadingOrderWidget()
-    rOW.addItems(3)
-    rOW.removeSelectedItems()
-    
-    rOW.show()
+
+    item = SupplementalListWidget()
+    item.addItems()
+    item.show()
     '''
     # 主窗口
     w = QWidget()
@@ -204,8 +190,8 @@ if __name__ == "__main__":
     item2 = QListWidgetItem()  # 创建QListWidgetItem对象
     item2.setSizeHint(QSize(400, 130))  # 设置QListWidgetItem大小
 
-    roi1 = ReadingOrderItem()
-    roi2 = ReadingOrderItem()
+    roi1 = SupplementalItem()
+    roi2 = SupplementalItem()
     
     listWidget.addItem(item1)
     listWidget.setItemWidget(item1, roi1)
@@ -215,12 +201,11 @@ if __name__ == "__main__":
     layout = QGridLayout()
     layout.addWidget(listWidget)
     w.setLayout(layout)
-    
-    
     w.show()
     '''
-    # item = ReadingOrderItem()
-    # item.show()
+    
+    
+
     
     
     sys.exit(app.exec_())

@@ -1,0 +1,96 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'supplementalitem.ui'
+#
+# Created by: PyQt5 UI code generator 5.12.3
+#
+# WARNING! All changes made in this file will be lost!
+
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+
+class Ui_SupplementalItem(object):
+    def setupUi(self, SupplementalItem):
+        SupplementalItem.setObjectName("SupplementalItem")
+        SupplementalItem.resize(500, 99)
+        SupplementalItem.setMinimumSize(QtCore.QSize(470, 38))
+        self.label_title = QtWidgets.QLabel(SupplementalItem)
+        self.label_title.setGeometry(QtCore.QRect(30, 10, 51, 21))
+        font = QtGui.QFont()
+        font.setFamily("Courier New")
+        font.setPointSize(14)
+        self.label_title.setFont(font)
+        self.label_title.setObjectName("label_title")
+        self.label_file = QtWidgets.QLabel(SupplementalItem)
+        self.label_file.setGeometry(QtCore.QRect(30, 40, 51, 21))
+        font = QtGui.QFont()
+        font.setFamily("Courier New")
+        font.setPointSize(14)
+        self.label_file.setFont(font)
+        self.label_file.setObjectName("label_file")
+        self.lineEdit_title = QtWidgets.QLineEdit(SupplementalItem)
+        self.lineEdit_title.setGeometry(QtCore.QRect(110, 10, 311, 20))
+        self.lineEdit_title.setObjectName("lineEdit_title")
+        self.lineEdit_file = QtWidgets.QLineEdit(SupplementalItem)
+        self.lineEdit_file.setGeometry(QtCore.QRect(110, 40, 261, 20))
+        self.lineEdit_file.setObjectName("lineEdit_file")
+        self.pushButton_Browse = QtWidgets.QPushButton(SupplementalItem)
+        self.pushButton_Browse.setGeometry(QtCore.QRect(380, 40, 62, 22))
+        self.pushButton_Browse.setMinimumSize(QtCore.QSize(60, 20))
+        font = QtGui.QFont()
+        font.setFamily("Courier New")
+        font.setPointSize(14)
+        self.pushButton_Browse.setFont(font)
+        self.pushButton_Browse.setObjectName("pushButton_Browse")
+        self.lineEdit_URL = QtWidgets.QLineEdit(SupplementalItem)
+        self.lineEdit_URL.setGeometry(QtCore.QRect(110, 70, 331, 20))
+        self.lineEdit_URL.setObjectName("lineEdit_URL")
+        self.label_URL = QtWidgets.QLabel(SupplementalItem)
+        self.label_URL.setGeometry(QtCore.QRect(30, 70, 31, 16))
+        font = QtGui.QFont()
+        font.setFamily("Courier New")
+        font.setPointSize(14)
+        self.label_URL.setFont(font)
+        self.label_URL.setObjectName("label_URL")
+        self.pushButton_UpDown = QtWidgets.QPushButton(SupplementalItem)
+        self.pushButton_UpDown.setGeometry(QtCore.QRect(450, 0, 31, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pushButton_UpDown.sizePolicy().hasHeightForWidth())
+        self.pushButton_UpDown.setSizePolicy(sizePolicy)
+        self.pushButton_UpDown.setMinimumSize(QtCore.QSize(24, 24))
+        self.pushButton_UpDown.setText("")
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("Up-20.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_UpDown.setIcon(icon)
+        self.pushButton_UpDown.setIconSize(QtCore.QSize(20, 20))
+        self.pushButton_UpDown.setObjectName("pushButton_UpDown")
+        self.radioButton_file = QtWidgets.QRadioButton(SupplementalItem)
+        self.radioButton_file.setGeometry(QtCore.QRect(90, 40, 21, 21))
+        self.radioButton_file.setMinimumSize(QtCore.QSize(21, 21))
+        font = QtGui.QFont()
+        font.setFamily("Courier New")
+        font.setPointSize(14)
+        self.radioButton_file.setFont(font)
+        self.radioButton_file.setText("")
+        self.radioButton_file.setChecked(True)
+        self.radioButton_file.setObjectName("radioButton_file")
+        self.radioButton_URL = QtWidgets.QRadioButton(SupplementalItem)
+        self.radioButton_URL.setGeometry(QtCore.QRect(90, 70, 21, 21))
+        self.radioButton_URL.setMinimumSize(QtCore.QSize(21, 21))
+        self.radioButton_URL.setText("")
+        self.radioButton_URL.setChecked(False)
+        self.radioButton_URL.setObjectName("radioButton_URL")
+
+        self.retranslateUi(SupplementalItem)
+        QtCore.QMetaObject.connectSlotsByName(SupplementalItem)
+
+    def retranslateUi(self, SupplementalItem):
+        _translate = QtCore.QCoreApplication.translate
+        SupplementalItem.setWindowTitle(_translate("SupplementalItem", "Form"))
+        self.label_title.setText(_translate("SupplementalItem", "title:"))
+        self.label_file.setText(_translate("SupplementalItem", "file:"))
+        self.pushButton_Browse.setText(_translate("SupplementalItem", "Browse"))
+        self.label_URL.setText(_translate("SupplementalItem", "URL:"))

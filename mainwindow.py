@@ -10,7 +10,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from ui_mainwindow import Ui_MainWindow
 from publicationmanifest import PublicationManifest
-
+from readingorderwidget import ReadingOrderWidget
+from supplementalitem import SupplementalListWidget
 
 class MainWindow(QMainWindow):
     
@@ -37,8 +38,21 @@ class MainWindow(QMainWindow):
         self.groups = Groups()
         layout.addWidget(self.groups)
         '''
-
+        w = QWidget()
+        layout = QHBoxLayout(w)
+        #layout.addStretch(0)
+        self.readingOrderWidget = ReadingOrderWidget()
+        layout.addWidget(self.readingOrderWidget)
+        #layout.addStretch(0)
         
+        self.setCentralWidget(w)
+        self.readingOrderWidget.addItems(3)
+        
+        
+        layout = QVBoxLayout(self.ui.dockWidgetContents_2)
+        self.supplementalListWidget = SupplementalListWidget()
+        layout.addWidget(self.supplementalListWidget)
+        self.supplementalListWidget.addItems(2)
         
         
     def _exit(self):

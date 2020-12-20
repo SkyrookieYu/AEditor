@@ -73,7 +73,11 @@ class ReadingOrderWidget(QWidget):
         super(ReadingOrderWidget, self).__init__()
 
         self.__listWidgetItemSerialNo = 0 # Unique index for 
-        self.resize(QSize(width + 100, height * 5))
+        
+        self.setGeometry(QRect(60, 70, 680, 790))
+        
+        self.resize(QSize(width + 100, height * 6))
+        
         self.setStyleSheet("QListWidget::item { border-bottom: 1px red; }")
         
         self.listWidget = QListWidget(self)
@@ -82,7 +86,7 @@ class ReadingOrderWidget(QWidget):
         self.__itemWidth = width
         self.__itemHeight = height
 
-        layout = QVBoxLayout()  # QGridLayout(self)
+        layout = QVBoxLayout()  # QGridLayout(self)  # 
         
  
         horizontalLayout = QHBoxLayout()
@@ -129,17 +133,7 @@ class ReadingOrderWidget(QWidget):
         self.setLayout(layout)
         
         self.retranslateUi(ReadingOrderWidget)        
-        '''
-        _translate = QCoreApplication.translate
-        self.setWindowTitle(_translate("ReadingOrderWidget", "ReadingOrderWidget"))
-        self.pushButton_Add.setText(_translate("ReadingOrderWidget", "Add"))
-        self.pushButton_Remove.setText(_translate("ReadingOrderWidget", "Remove"))
-        self.label_ReadingOrderEditor.setText(_translate("ReadingOrderWidget", "Reading Order Editor"))        
-        '''
-        
-        
-        
-        
+   
     def retranslateUi(self, ReadingOrderWidget):
         _translate = QCoreApplication.translate
         self.setWindowTitle(_translate("ReadingOrderWidget", "ReadingOrderWidget"))
