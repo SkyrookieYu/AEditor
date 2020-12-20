@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>99</height>
+    <width>470</width>
+    <height>70</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -19,30 +19,11 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QLabel" name="label_title">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>10</y>
-     <width>51</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Courier New</family>
-     <pointsize>14</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string>title:</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_file">
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>40</y>
+     <y>10</y>
      <width>51</width>
      <height>21</height>
     </rect>
@@ -57,21 +38,11 @@
     <string>file:</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit_title">
-   <property name="geometry">
-    <rect>
-     <x>110</x>
-     <y>10</y>
-     <width>311</width>
-     <height>20</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLineEdit" name="lineEdit_file">
    <property name="geometry">
     <rect>
      <x>110</x>
-     <y>40</y>
+     <y>10</y>
      <width>261</width>
      <height>20</height>
     </rect>
@@ -81,7 +52,7 @@
    <property name="geometry">
     <rect>
      <x>380</x>
-     <y>40</y>
+     <y>10</y>
      <width>62</width>
      <height>22</height>
     </rect>
@@ -106,7 +77,7 @@
    <property name="geometry">
     <rect>
      <x>110</x>
-     <y>70</y>
+     <y>40</y>
      <width>331</width>
      <height>20</height>
     </rect>
@@ -116,7 +87,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>70</y>
+     <y>40</y>
      <width>31</width>
      <height>16</height>
     </rect>
@@ -131,46 +102,11 @@
     <string>URL:</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_UpDown">
-   <property name="geometry">
-    <rect>
-     <x>450</x>
-     <y>0</y>
-     <width>31</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>24</width>
-     <height>24</height>
-    </size>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="icon">
-    <iconset>
-     <normaloff>Up-20.png</normaloff>Up-20.png</iconset>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>20</width>
-     <height>20</height>
-    </size>
-   </property>
-  </widget>
   <widget class="QRadioButton" name="radioButton_file">
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>40</y>
+     <y>10</y>
      <width>21</width>
      <height>21</height>
     </rect>
@@ -198,7 +134,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>70</y>
+     <y>40</y>
      <width>21</width>
      <height>21</height>
     </rect>

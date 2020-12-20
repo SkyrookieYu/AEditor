@@ -18,7 +18,7 @@ from ui_supplementalitem import Ui_SupplementalItem
 class SupplementalItem(QWidget):
     
     # switch_window = pyqtSignal()
-    signal_resize_item = pyqtSignal(int, int, int)
+    # signal_resize_item = pyqtSignal(int, int, int)
     
     def __init__(self, serialNo=-1):
         super(SupplementalItem, self).__init__()
@@ -36,20 +36,7 @@ class SupplementalItem(QWidget):
         
     def serialNo(self):
         return self.__serialNo
-    
-    @pyqtSlot()
-    def on_pushButton_UpDown_clicked(self):
-        print("current state = {}".format(self.upDownCount % 2 == 0))
-        if self.upDownCount % 2 == 0:
-            self.resize(self.width(), self.ui.pushButton_UpDown.height() + 2)
-            self.ui.pushButton_UpDown.setIcon(QIcon("Down-20.png"))
-            self.signal_resize_item.emit(self.serialNo(), self.width(), self.ui.pushButton_UpDown.height() + 2)
-        else:
-            self.resize(self.upDownSize)   
-            self.ui.pushButton_UpDown.setIcon(QIcon("Up-20.png"))
-            self.signal_resize_item.emit(self.serialNo(), self.width(), self.height())           
-        self.upDownCount += 1
-     
+        
     @pyqtSlot()
     def on_pushButton_Browse_clicked(self):
         print("on_pushButton_Browse_clicked")
@@ -62,7 +49,7 @@ class SupplementalItem(QWidget):
  
 class SupplementalListWidget(QWidget):
         
-    def __init__(self, width=500, height=110):
+    def __init__(self, width=500, height=70):
         super(SupplementalListWidget, self).__init__()
 
         self.__listWidgetItemSerialNo = 0 # Unique index for 
@@ -109,18 +96,7 @@ class SupplementalListWidget(QWidget):
         self.pushButton_Remove.setFont(font)
         self.pushButton_Remove.setObjectName("pushButton_Remove")
         horizontalLayout.addWidget(self.pushButton_Remove)
-        '''
-        self.label_ReadingOrderEditor = QLabel(self)
-        self.label_ReadingOrderEditor.setGeometry(QRect(220, 10, 301, 63))
-        font = QFont()
-        font.setFamily("Courier New")
-        font.setPointSize(24)
-        self.label_ReadingOrderEditor.setFont(font)
-        self.label_ReadingOrderEditor.setAlignment(Qt.AlignCenter)
-        self.label_ReadingOrderEditor.setObjectName("label_ReadingOrderEditor")
-        
-        layout.addWidget(self.label_ReadingOrderEditor)
-        '''
+
         layout.addWidget(self.listWidget)
         layout.addLayout(horizontalLayout)
         
@@ -133,7 +109,6 @@ class SupplementalListWidget(QWidget):
         self.setWindowTitle(_translate("SupplementalListWidget", "SupplementalListWidget"))
         self.pushButton_Add.setText(_translate("SupplementalListWidget", "Add"))
         self.pushButton_Remove.setText(_translate("SupplementalListWidget", "Remove"))
-        # self.label_ReadingOrderEditor.setText(_translate("SupplementalListWidget", "Reading Order Editor"))
     
     def getItemSize(self):
         return QSize(self.__itemWidth, self.__itemHeight)
@@ -148,7 +123,7 @@ class SupplementalListWidget(QWidget):
             item.setSizeHint(self.getItemSize()) 
             
             roi = SupplementalItem(self.getSerialNo())
-            roi.signal_resize_item.connect(self.on_signal_resize_item)
+            # roi.signal_resize_item.connect(self.on_signal_resize_item)
               
             self.listWidget.addItem(item)
             self.listWidget.setItemWidget(item, roi)
@@ -160,13 +135,15 @@ class SupplementalListWidget(QWidget):
             oldItem = self.listWidget.takeItem(self.listWidget.row(item))
             del oldItem
 
+    '''
     @pyqtSlot(int, int, int)
     def on_signal_resize_item(self, serialNo, width, height):  
         for i in range(self.listWidget.count()):
             if self.listWidget.itemWidget(self.listWidget.item(i)).serialNo() == serialNo:
                 self.listWidget.item(i).setSizeHint(QSize(width, height)) # (width, height)
         print("item[{}] = {} * {}".format(serialNo, width, height))
-
+    '''
+    
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     
