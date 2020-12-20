@@ -220,7 +220,7 @@
     </font>
    </property>
    <property name="text">
-    <string/>
+    <string notr="true"/>
    </property>
    <property name="checked">
     <bool>true</bool>
