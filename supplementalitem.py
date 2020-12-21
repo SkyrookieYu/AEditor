@@ -61,8 +61,16 @@ class SupplementalListWidget(QWidget):
         self.setStyleSheet("QListWidget::item { border-bottom: 1px red; }")
         
         self.listWidget = QListWidget(self)
-        self.listWidget.setStyleSheet("QListWidget::item { border-bottom: 1px solid black; }")
+        self.listWidget.setStyleSheet("""
+                                      QListWidget::item { border: 1px solid #5196e0;} 
+                                      QListWidget::item:selected { border: 3px solid #ed370e;  }
+                                      """)
         self.listWidget.setDragDropMode(QAbstractItemView.InternalMove)
+        self.listWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.listWidget.customContextMenuRequested[QPoint].connect(self.supplementalListWidgetContextMenu)
+        
+        
+        
         self.__itemWidth = width
         self.__itemHeight = height
 
@@ -99,16 +107,53 @@ class SupplementalListWidget(QWidget):
 
         layout.addWidget(self.listWidget)
         layout.addLayout(horizontalLayout)
-        
         self.setLayout(layout)
         
+        self.addItemAction = QAction(self)
+        self.addItemAction.triggered.connect(self.on_addItemAction_triggered)
+        self.removeItemAction = QAction(self)
+        self.removeItemAction.triggered.connect(self.on_removeItemAction_triggered)
+        self.modifyItemAction = QAction(self)
+        self.modifyItemAction.triggered.connect(self.on_modifyItemAction_triggered)
+        
+        self.pushButton_Add.clicked.connect(self.on_addItemAction_triggered)
+        self.pushButton_Remove.clicked.connect(self.on_removeItemAction_triggered)
+        
         self.retranslateUi(SupplementalListWidget)        
-   
+        # QMetaObject.connectSlotsByName(self)
+        
     def retranslateUi(self, SupplementalListWidget):
         _translate = QCoreApplication.translate
         self.setWindowTitle(_translate("SupplementalListWidget", "SupplementalListWidget"))
         self.pushButton_Add.setText(_translate("SupplementalListWidget", "Add"))
         self.pushButton_Remove.setText(_translate("SupplementalListWidget", "Remove"))
+        self.addItemAction.setText(_translate("SupplementalListWidget", "Add Item"))
+        self.removeItemAction.setText(_translate("SupplementalListWidget", "Remove Item"))
+        self.modifyItemAction.setText(_translate("SupplementalListWidget", "Modify Item"))
+       
+    def supplementalListWidgetContextMenu(self, point):
+        popMenu = QMenu()
+        popMenu.addAction(self.addItemAction)
+        popMenu.addAction(self.removeItemAction)
+        # popMenu.addAction(self.modifyItemAction)
+    
+        popMenu.exec_(QCursor.pos())
+        
+    @pyqtSlot(bool)
+    def on_addItemAction_triggered(self, checked):
+        self.addItems(1)
+        print("addItem is clicked")
+
+    @pyqtSlot(bool)
+    def on_removeItemAction_triggered(self, checked):
+        self.removeSelectedItems()
+        self.resortItems()
+        print("removeItem is clicked")       
+        
+    @pyqtSlot(bool)
+    def on_modifyItemAction_triggered(self, checked):
+        # self.removeSelectedItems()
+        print("modifyItem is clicked") 
     
     def getItemSize(self):
         return QSize(self.__itemWidth, self.__itemHeight)
@@ -134,6 +179,10 @@ class SupplementalListWidget(QWidget):
         for item in items:
             oldItem = self.listWidget.takeItem(self.listWidget.row(item))
             del oldItem
+            
+    def resortItems(self):
+        for i in range(self.listWidget.count()):
+            self.listWidget.item(i).setText(str(i))
 
     '''
     @pyqtSlot(int, int, int)
