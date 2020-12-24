@@ -32,6 +32,7 @@ from readingorderwidget import ReadingOrderWidget
 from supplementalitem import SupplementalListWidget
 from tocitem import TOCWidget
 from treewidget_toc import TreeWidget_TOC
+from coverpreviewwidget import CoverPreviewWidget
 
 
 class MainWindow(QMainWindow):
@@ -59,7 +60,10 @@ class MainWindow(QMainWindow):
         self.treeWidget_TOC = TreeWidget_TOC() # TOCWidget()
         layout.addWidget(self.treeWidget_TOC)
         
-        
+        layout = QVBoxLayout(self.ui.dockWidgetContents)
+        self.coverPreviewWidget = CoverPreviewWidget()
+        layout.addWidget(self.coverPreviewWidget)
+                
         
         
         '''
