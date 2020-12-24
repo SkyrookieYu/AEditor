@@ -44,6 +44,7 @@ class NewBookWizard(QMainWindow):
         if len(saveDir) and len(bookTitle):
             print(saveDir + ":" + bookTitle)
             print(self.ui.cb_Embedded.isChecked())
+            self.switch_window.emit()
         else:
             QMessageBox.warning(self, self._translate("NewBookWizard", "Warning!"), self._translate("NewBookWizard", "You must select one directory and keyin the booktitle!"))
             

@@ -9,7 +9,7 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-import librosa
+# import librosa
 # from mimetypes import MimeTypes
 import filetype
 
@@ -65,18 +65,21 @@ class SupplementalListWidget(QWidget):
                                       QListWidget::item { border: 1px solid #5196e0;} 
                                       QListWidget::item:selected { border: 3px solid #ed370e;  }
                                       """)
+        '''                              
+        sshFile="darkorange.stylesheet"
+        with open(sshFile,"r") as fh:
+            self.setStyleSheet(fh.read())
+        '''
+        
         self.listWidget.setDragDropMode(QAbstractItemView.InternalMove)
         self.listWidget.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.listWidget.customContextMenuRequested[QPoint].connect(self.supplementalListWidgetContextMenu)
-        
-        
+        self.listWidget.customContextMenuRequested[QPoint].connect(self.on_SupplementalListWidgetContextMenu_triggered)
         
         self.__itemWidth = width
         self.__itemHeight = height
 
         layout = QVBoxLayout()  # QGridLayout(self)  # 
         
- 
         horizontalLayout = QHBoxLayout()
         horizontalLayout.setContentsMargins(0, 0, 0, 0)
         horizontalLayout.setObjectName("horizontalLayout")
@@ -131,12 +134,21 @@ class SupplementalListWidget(QWidget):
         self.removeItemAction.setText(_translate("SupplementalListWidget", "Remove Item"))
         self.modifyItemAction.setText(_translate("SupplementalListWidget", "Modify Item"))
        
-    def supplementalListWidgetContextMenu(self, point):
-        popMenu = QMenu()
-        popMenu.addAction(self.addItemAction)
-        popMenu.addAction(self.removeItemAction)
-        # popMenu.addAction(self.modifyItemAction)
-    
+    def on_SupplementalListWidgetContextMenu_triggered(self, point):
+        print("on_TOCWidgetContextMenu_triggered")  
+        item = self.listWidget.itemAt(point)
+        if item is None:
+            popMenu = QMenu()
+            popMenu.addAction(self.addItemAction)
+            # popMenu.addAction(self.removeItemAction)
+            # popMenu.addAction(self.modifyItemAction)
+            # popMenu.exec_(QCursor.pos())            
+        else:
+        
+            popMenu = QMenu()
+            # popMenu.addAction(self.addItemAction)
+            popMenu.addAction(self.removeItemAction)
+            # popMenu.addAction(self.modifyItemAction)
         popMenu.exec_(QCursor.pos())
         
     @pyqtSlot(bool)

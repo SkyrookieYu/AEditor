@@ -5,3 +5,8 @@ l7.01.lpf
 /*.lpf
 /test.py
 /test.ui
+/tocitem.ui
+/toc.ui
+/ui_tocitem.py
+/tocitem.py
+/treewidget_test_1.py

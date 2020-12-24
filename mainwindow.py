@@ -5,13 +5,34 @@ Created on Mon Dec 14 12:19:51 2020
 @URL: https://github.com/SkyrookieYu/AEditor
 """
 
+
+from bs4 import BeautifulSoup
+import filetype
+import glob
+import json
+# import librosa
+from mutagen.mp3 import MP3
+# from mimetypes import MimeTypes
+import os
+import re
+import sys
+import tempfile
+import time
+import urllib.request
+import zipfile
+
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+
 from ui_mainwindow import Ui_MainWindow
+
 from publicationmanifest import PublicationManifest
 from readingorderwidget import ReadingOrderWidget
 from supplementalitem import SupplementalListWidget
+from tocitem import TOCWidget
+from treewidget_toc import TreeWidget_TOC
+
 
 class MainWindow(QMainWindow):
     
@@ -28,11 +49,19 @@ class MainWindow(QMainWindow):
 
         self.ui.action_Exit.triggered.connect(self._exit)
         
-        self.layout = QVBoxLayout()
+        layout = QVBoxLayout(self.ui.tab_Metadata)
         self.publicationManifest = PublicationManifest()
-        self.layout.addWidget(self.publicationManifest)
+        layout.addWidget(self.publicationManifest)
         # layout.setSizeConstraint(QLayout.SetMinimumSize)
-        self.ui.tab_Metadata.setLayout(self.layout)
+        # self.ui.tab_Metadata.setLayout(self.layout)
+        
+        layout = QVBoxLayout(self.ui.tab_TOC)
+        self.treeWidget_TOC = TreeWidget_TOC() # TOCWidget()
+        layout.addWidget(self.treeWidget_TOC)
+        
+        
+        
+        
         '''
         layout = QVBoxLayout()
         self.groups = Groups()

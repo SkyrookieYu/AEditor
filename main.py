@@ -5,10 +5,8 @@ Created on Mon Dec 14 12:19:51 2020
 @URL: https://github.com/SkyrookieYu/AEditor
 """
 
-
 import sys
 import platform
-from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -24,9 +22,6 @@ from newbookwizard import NewBookWizard
 
 ## ==> MAINWINDOW
 from mainwindow import MainWindow
-
-
-
 
 class Controller:
     
@@ -46,6 +41,7 @@ class Controller:
 
     def show_NewBookWizard(self):
         self.newBookWizard = NewBookWizard()
+        self.newBookWizard.switch_window.connect(self.show_MainWindow)
         self.newOrOpen.close()
         self.newBookWizard.show()
         
