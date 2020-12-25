@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>794</width>
-    <height>283</height>
+    <width>792</width>
+    <height>276</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -94,7 +94,7 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>211</x>
@@ -113,7 +113,7 @@ p, li { white-space: pre-wrap; }
        </font>
       </property>
       <property name="text">
-       <string>Recently opened files:</string>
+       <string>Recently opened files or directories:</string>
       </property>
      </widget>
     </item>

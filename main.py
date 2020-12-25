@@ -23,10 +23,13 @@ from newbookwizard import NewBookWizard
 ## ==> MAINWINDOW
 from mainwindow import MainWindow
 
-class Controller:
+class Controller(QObject):
+    
+    signal_switch_to_mainwindow = pyqtSignal(str)
     
     def __init__(self):
-        pass
+        QWidget.__init__(self)
+        
 
     def show_LaunchPage(self):
         self.launchPage = LaunchPage()
@@ -35,17 +38,34 @@ class Controller:
 
     def show_NewOrOpen(self):
         self.newOrOpen = NewOrOpen()
-        self.newOrOpen.switch_window.connect(self.show_NewBookWizard)
+        self.newOrOpen.signal_switch_window[bool, str].connect(self.show_NewBookWizard)
         self.launchPage.close()
         self.newOrOpen.show()
+    
+    #@pyqtSlot(bool, str)
+    def show_NewBookWizard(self, newOrOpen, item):
+        print("newBookWizard")
+        if newOrOpen == True:
+            self.newBookWizard = NewBookWizard()
+            self.newOrOpen.close()
+            self.newBookWizard.switch_window[dict].connect(self.show_MainWindow_new)
+            self.newBookWizard.show()
+        else:
+            #self.newBookWizard = NewBookWizard(item)
+            self.newOrOpen.close()
+            self.signal_switch_to_mainwindow[str].connect(self.show_MainWindow_open)
+            self.signal_switch_to_mainwindow[str].emit(item)
+               
+    def show_MainWindow_new(self, dictionary):
+        # todo
+        self.mainWindow = MainWindow(dictionary)
+        self.mainWindow.signal_exit.connect(self.exit)
+        if hasattr(self, 'newBookWizard'):
+            self.newBookWizard.close()
+        self.mainWindow.show()    
 
-    def show_NewBookWizard(self):
-        self.newBookWizard = NewBookWizard()
-        self.newBookWizard.switch_window.connect(self.show_MainWindow)
-        self.newOrOpen.close()
-        self.newBookWizard.show()
-        
-    def show_MainWindow(self):
+    def show_MainWindow_open(self, item):
+        # todo
         self.mainWindow = MainWindow()
         self.mainWindow.signal_exit.connect(self.exit)
         if hasattr(self, 'newBookWizard'):
@@ -81,6 +101,6 @@ if __name__ == "__main__":
     # form.show()
     
     controller = Controller()
-    controller.show_MainWindow()    
+    controller.show_LaunchPage()    
     
     sys.exit(app.exec_())
