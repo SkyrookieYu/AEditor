@@ -10,6 +10,7 @@ import platform
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from multipledispatch import dispatch
 
 ## ==> LAUNCH PAGE
 from launchpage import LaunchPage
@@ -22,6 +23,8 @@ from newbookwizard import NewBookWizard
 
 ## ==> MAINWINDOW
 from mainwindow import MainWindow
+
+from book import Audiobook
 
 class Controller(QObject):
     
@@ -43,42 +46,51 @@ class Controller(QObject):
         self.newOrOpen.show()
     
     #@pyqtSlot(bool, str)
-    def show_NewBookWizard(self, newOrOpen, item):
+    def show_NewBookWizard(self, newOrOpen, info):
         print("newBookWizard")
         if newOrOpen == True:
             self.newBookWizard = NewBookWizard()
             self.newOrOpen.close()
-            self.newBookWizard.switch_window[dict].connect(self.show_MainWindow_new)
+            self.newBookWizard.switch_window[dict].connect(self.show_MainWindow)
             self.newBookWizard.show()
         else:
             #self.newBookWizard = NewBookWizard(item)
             self.newOrOpen.close()
-            self.signal_switch_to_mainwindow[str].connect(self.show_MainWindow_open)
-            self.signal_switch_to_mainwindow[str].emit(item)
-               
-    def show_MainWindow_new(self, dictionary):
+            self.signal_switch_to_mainwindow[str].connect(self.show_MainWindow)
+            self.signal_switch_to_mainwindow[str].emit(info)
+    
+    @dispatch(dict)           
+    def show_MainWindow(self, dict_New):
+        print("show_MainWindow for dict")
         # todo
-        self.mainWindow = MainWindow(dictionary)
+        self.mainWindow = MainWindow(dict_New)
         self.mainWindow.signal_exit.connect(self.exit)
         if hasattr(self, 'newBookWizard'):
             self.newBookWizard.close()
         self.mainWindow.show()    
 
-    def show_MainWindow_open(self, item):
+    @dispatch(str)
+    def show_MainWindow(self, item):
+        print("show_MainWindow for str")
         # todo
+        self.book = Audiobook.getInstace(item)
+        
+        
+        
         self.mainWindow = MainWindow()
         self.mainWindow.signal_exit.connect(self.exit)
         if hasattr(self, 'newBookWizard'):
             self.newBookWizard.close()
         self.mainWindow.show()
-        
+     
+    '''
     def show_Groups(self):
         self.groups = Groups()
         # self.groups.signal_exit.connect(self.exit)
         if hasattr(self, 'mainWindow'):
             self.mainWindow.close()
         self.groups.show()
-        
+    '''    
         
     def exit(self):
         QCoreApplication.quit()

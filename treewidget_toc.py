@@ -74,6 +74,10 @@ class TreeWidget_TOC(QMainWindow):
             self.addTopLevelItemAction.triggered.connect(self.on_addTopLevelItemAction_triggered)
             #self.removeItemAction = self.menu_context.addAction("removeItem")
             #self.removeItemAction.triggered.connect(self.on_removeItemAction_triggered)
+            self.traverseTreeAction = self.menu_context.addAction("travere")
+            self.traverseTreeAction.triggered.connect(self.on_traverseTreeAction_triggered) # (self.getItemsRecursively) #
+            self.generateTreeAction = self.menu_context.addAction("generate")
+            self.generateTreeAction.triggered.connect(lambda : self.on_generateTreeAction_triggered([{'level': 0, 'href': '1', 'title': '1', 'children': [{'level': 1, 'href': '1', 'title': '1.2', 'children': []}]}, {'level': 0, 'href': ' 2', 'title': '2', 'children': [{'level': 1, 'href': '1', 'title': '2.1', 'children': []}, {'level': 1, 'href': ' 2', 'title': '2.2', 'children': []}]}])) # (self.getItemsRecursively) #
             self.menu_context.exec_(self.treeWidget.mapToGlobal(point))
             
             
@@ -123,7 +127,67 @@ class TreeWidget_TOC(QMainWindow):
                 
             for column in range(self.treeWidget.columnCount()):
                 self.treeWidget.resizeColumnToContents(column)            
- 
+
+    
+    '''
+    e.g., 
+    [{'level': 0, 'href': '1', 'title': '1', 'children': [{'level': 1, 'href': '1', 'title': '1.2', 'children': []}]}, 
+     {'level': 0, 'href': ' 2', 'title': '2', 'children': [{'level': 1, 'href': '1', 'title': '2.1', 'children': []}, {'level': 1, 'href': ' 2', 'title': '2.2', 'children': []}]}]
+    '''
+    @pyqtSlot()
+    def on_traverseTreeAction_triggered(self):
+        print("on_traverseAction_triggered")
+        self._TOCList = []
+        def serchChildItem(item = None, level = 0):
+            TOCList = []
+            if not item: 
+                return
+            for m in range(item.childCount()): 
+                child = item.child(m)                
+                TOCList.append({"level" : level, "href" : child.comboBox.currentText(), "title" : child.lineEdit.text(), "children" : serchChildItem(child, level + 1)})   
+            return TOCList
+            
+        for i in range(self.treeWidget.topLevelItemCount()):
+            item = self.treeWidget.topLevelItem(i)
+            level = 0
+            self._TOCList.append({"level" : level, "href" : item.comboBox.currentText(), "title" : item.lineEdit.text(), "children" : serchChildItem(item, level + 1)})
+        print(self._TOCList)
+
+    '''
+    e.g., 
+    [{'level': 0, 'href': '1', 'title': '1', 'children': [{'level': 1, 'href': '1', 'title': '1.2', 'children': []}]}, 
+     {'level': 0, 'href': ' 2', 'title': '2', 'children': [{'level': 1, 'href': '1', 'title': '2.1', 'children': []}, {'level': 1, 'href': ' 2', 'title': '2.2', 'children': []}]}]
+    '''
+    # https://blog.csdn.net/lly1122334/article/details/103040110 : dict
+    def on_generateTreeAction_triggered(self, data, root = None):
+        self.treeWidget.clear()
+        
+        def addChildItem(data, level, parentItem):
+            children = data['children']
+            if children == []:
+                return
+            for i in range(len(children)): 
+                child = children[i]
+                lvl = child['level']
+                if lvl == level:
+                    item = CustomTreeItem(parentItem)
+                    # item.comboxBox = 
+                    item.lineEdit.setText(child["title"])
+                    addChildItem(child, level + 1, item)
+                    
+        if isinstance(data, list):
+            # self.generateTreeWidget(value, child)
+            for i in range(len(data)):
+                dict_TOC = data[i]
+                level = dict_TOC["level"]
+                if level == 0:
+                    item = CustomTreeItem(self.treeWidget)
+                    # item.comboxBox = 
+                    item.lineEdit.setText(dict_TOC["title"])
+                    self.treeWidget.addTopLevelItem(item) 
+                    # if dict_TOC['children'] != []:
+                    addChildItem(dict_TOC, level + 1, item)
+                    
 # ------------------------------------------------------------------------------
 # Custom QTreeWidgetItem
 # ------------------------------------------------------------------------------

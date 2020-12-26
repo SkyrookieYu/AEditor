@@ -123,15 +123,37 @@
        </font>
       </property>
       <property name="text">
-       <string>File path:</string>
+       <string>Book Directory:</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="le_FilePath"/>
+     <widget class="QLineEdit" name="le_FilePath">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="QPushButton" name="button_Browse">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>81</width>
+        <height>25</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>81</width>
+        <height>25</height>
+       </size>
+      </property>
       <property name="font">
        <font>
         <pointsize>16</pointsize>
@@ -206,7 +228,7 @@
     <string>New Audiobook Wizard</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>240</x>

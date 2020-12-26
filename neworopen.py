@@ -53,9 +53,9 @@ class NewOrOpen(QMainWindow):
 
     def new(self):
         # QMessageBox.information(self, self._translate("NewOrOpen", "Hint!"), self._translate("NewOrOpen", "New !"), QMessageBox.Ok)
-        saveDirectory = QFileDialog.getExistingDirectory(self, self._translate("NewOrOpen", "Select one directory"), self._translate("NewOrOpen", "./"))
-        print(saveDirectory)
-        self.updateSettings(True, saveDirectory)
+        # saveDirectory = QFileDialog.getExistingDirectory(self, self._translate("NewOrOpen", "Select one directory"), self._translate("NewOrOpen", "./"))
+        # print(saveDirectory)
+        self.updateSettings(True, '')
         
 
     def open(self):
@@ -99,6 +99,10 @@ class NewOrOpen(QMainWindow):
      
     def updateSettings(self, newOrOpen, item):
         # filename = self.recentFilesInSettings[qModelIndex.row()]
+        if newOrOpen == True:
+            self.signal_switch_window[bool, str].emit(newOrOpen, item)
+            return
+            
         slm = QStringListModel()
         slm.setStringList([])
         self.ui.listView.setModel(slm)
