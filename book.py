@@ -220,6 +220,27 @@ class Audiobook(QObject):
         self._BOOK_DIR = ""
         '''
         
+        def dictify(ol, level, tagName = "ol"):
+            childrenList = []
+            lvl = level
+        
+            for li in ol.find_all("li", recursive = False):
+                result = {}
+                a_tag = li.find('a', recursive = False)
+                # a_tag['href'], a_tag.get_text()
+                # print(a_tag)
+                result['level'] = lvl
+                result['href'] = a_tag['href']
+                result['title'] = a_tag.get_text()
+                
+                next_ol = li.find(tagName, recursive = False)
+                if next_ol:
+                    result['children'] = dictify(next_ol, lvl + 1)
+                else:
+                    result['children'] = []
+                childrenList.append(result)
+            return childrenList
+        
         print('openFromDirectory')
         # self._BOOK_DIR = directory
         if os.path.exists(directory + "/index.html"):
@@ -292,7 +313,8 @@ class Audiobook(QObject):
                 print("TOC ===\n", "*" * 70, "\n", toc)
                 self.__TOC = toc
                 # self.__TOC_File = "index.html"
-                 
+                
+                '''
                 li_tags = toc.find_all('li')  
 
                 current_tag = toc
@@ -312,6 +334,15 @@ class Audiobook(QObject):
                 for li_tag in li_tags:
                     a_tag = li_tag.find('a')
                     self._TOC_List.append((a_tag['href'], a_tag.get_text()))
+                
+                '''
+                ol = toc.find('ol', recursive = False)
+                ul = toc.find('ul', recursive = False)
+                if ol:
+                    self._TOC_List = dictify(ol, 0)
+                elif ul:
+                    self._TOC_List = dictify(ul, 0, tagName = "ul")
+                print("dictify ===\n", "*" * 70, "\n", self._TOC_List)
                 
                 # print("TOC ===\n", "*" * 70, "\n", self.__TOC_List) # print(self.__TOC_List)
             else:
