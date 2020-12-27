@@ -9,11 +9,48 @@ import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
- 
+from multipledispatch import dispatch 
 
 class TreeWidget_TOC(QMainWindow):
+    
+    @dispatch(list)
+    def __init__( self, tocList ):
  
-    def __init__( self, parent=None ):
+        ## Init:
+        super(TreeWidget_TOC, self).__init__(None)
+ 
+        # ----------------
+        # Create Simple UI with QTreeWidget
+        # ----------------
+        self.centralwidget = QWidget(self)
+        self.verticalLayout = QVBoxLayout(self.centralwidget)
+        self.treeWidget = QTreeWidget(self.centralwidget)
+        self.verticalLayout.addWidget(self.treeWidget)
+        self.setCentralWidget(self.centralwidget)
+ 
+        # ----------------
+        # Set TreeWidget Headers
+        # ----------------
+        HEADERS = ( "Pickup one file/URL", "Description", "Start Time", "End Time")
+        self.treeWidget.setColumnCount(len(HEADERS))
+        self.treeWidget.setHeaderLabels(HEADERS)
+ 
+        ## Set Columns Width to match content:
+        for column in range(self.treeWidget.columnCount()):
+            self.treeWidget.resizeColumnToContents(column)
+            
+        self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)  
+        self.treeWidget.customContextMenuRequested.connect(self.on_menuContext)  
+        
+        self.treeWidget.setDragDropMode(QAbstractItemView.InternalMove) 
+        
+        self.on_generateTreeAction_triggered(tocList)
+        
+    
+ 
+    
+    @dispatch()
+    def __init__( self, parent = None ):
  
         ## Init:
         super(TreeWidget_TOC, self).__init__( parent )
@@ -66,8 +103,8 @@ class TreeWidget_TOC(QMainWindow):
             #self.removeItemAction.triggered.connect(self.on_removeItemAction_triggered)
             self.traverseTreeAction = self.menu_context.addAction("travere")
             self.traverseTreeAction.triggered.connect(self.on_traverseTreeAction_triggered) # (self.getItemsRecursively) #
-            self.generateTreeAction = self.menu_context.addAction("generate")
-            self.generateTreeAction.triggered.connect(lambda : self.on_generateTreeAction_triggered([{'level': 0, 'href': '1#t=0,100.24', 'title': '111', 'children': []}, {'level': 0, 'href': ' 2#t=100.24,150.52', 'title': '2222', 'children': [{'level': 1, 'href': '  3#t=150.52,200.06', 'title': '3333', 'children': []}]}])) # (self.getItemsRecursively) #
+            #self.generateTreeAction = self.menu_context.addAction("generate")
+            #self.generateTreeAction.triggered.connect(lambda : self.on_generateTreeAction_triggered([{'level': 0, 'href': '1#t=0,100.24', 'title': '111', 'children': []}, {'level': 0, 'href': ' 2#t=100.24,150.52', 'title': '2222', 'children': [{'level': 1, 'href': '  3#t=150.52,200.06', 'title': '3333', 'children': []}]}])) # (self.getItemsRecursively) #
             self.menu_context.exec_(self.treeWidget.mapToGlobal(point))
             
             

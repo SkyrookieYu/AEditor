@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'publicationmanifest_test.ui'
+# Form implementation generated from reading ui file 'publicationmanifest.ui'
 #
 # Created by: PyQt5 UI code generator 5.12.3
 #
@@ -84,7 +84,7 @@ class Ui_PublicationManifest(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, -319, 600, 900))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 600, 900))
         self.scrollAreaWidgetContents_2.setMinimumSize(QtCore.QSize(600, 900))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.formLayout_3 = QtWidgets.QFormLayout(self.scrollAreaWidgetContents_2)
@@ -157,6 +157,7 @@ class Ui_PublicationManifest(object):
         self.label_cover.setObjectName("label_cover")
         self.formLayout_3.setWidget(14, QtWidgets.QFormLayout.LabelRole, self.label_cover)
         self.lineEdit_cover = QtWidgets.QLineEdit(self.scrollAreaWidgetContents_2)
+        self.lineEdit_cover.setReadOnly(True)
         self.lineEdit_cover.setObjectName("lineEdit_cover")
         self.formLayout_3.setWidget(15, QtWidgets.QFormLayout.SpanningRole, self.lineEdit_cover)
         self.label_duration = QtWidgets.QLabel(self.scrollAreaWidgetContents_2)

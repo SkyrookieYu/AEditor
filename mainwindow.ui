@@ -34,6 +34,7 @@
     <addaction name="action_New"/>
     <addaction name="action_Open"/>
     <addaction name="action_Close"/>
+    <addaction name="action_Save"/>
     <addaction name="action_Exit"/>
    </widget>
    <widget class="QMenu" name="menu_Edit">
@@ -63,7 +64,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action_New"/>
    <addaction name="action_Preview"/>
    <addaction name="action_Validate"/>
    <addaction name="action_Pack"/>
@@ -322,6 +322,11 @@
   <action name="action_Exit">
    <property name="text">
     <string>&amp;Exit</string>
+   </property>
+  </action>
+  <action name="action_Save">
+   <property name="text">
+    <string>&amp;Save</string>
    </property>
   </action>
  </widget>

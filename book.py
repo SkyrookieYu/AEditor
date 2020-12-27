@@ -16,7 +16,7 @@ import re
 import sys
 from mutagen.mp3 import MP3
 import backports.tempfile
-
+from multipledispatch import dispatch
 
 
 from PyQt5.QtCore import *
@@ -179,10 +179,9 @@ class Audiobook(QObject):
             Audiobook(item_Open)
         return Audiobook._instance
     
-    # Private Constructor
-    def __init__(self, item_Open, parent=None):
-        super().__init__(parent)
-        
+    @dispatch(dict) # Private Constructor
+    def __init__(self, dict_New):
+        super().__init__(None)
         if Audiobook._instance is not None:
             raise Exception('Only one instace of Book should exist!')
             return
@@ -200,13 +199,14 @@ class Audiobook(QObject):
         self._dirty = False
         
         self._PEP_File = ''
+        
         self._CSS_File_List = []
         
         self._TOC = ''
         self._TOC_File = ''
         self._TOC_List = []
         
-        self._MANIFEST = ''
+        self._MANIFEST = {}
         self._MANIFEST_File = ''
         self._MANIFEST_List = []
         
@@ -242,6 +242,67 @@ class Audiobook(QObject):
                                         'readingProgression', 
                                         'duration', 
                                         'readingOrder', 
+                                        'resources']    
+    
+    
+    
+    
+    
+    @dispatch(str) # Private Constructor
+    def __init__(self, item_Open):
+        super().__init__(None)
+        
+        if Audiobook._instance is not None:
+            raise Exception('Only one instace of Book should exist!')
+            return
+              
+        Audiobook._instance = self
+        self._id = id(self)
+            
+        self._optionNo = 1
+        
+        self._loaded = False
+        self._dirty = False
+        
+        self._PEP_File = ''
+        
+        self._CSS_File_List = []
+        
+        self._TOC = ''
+        self._TOC_File = ''
+        self._TOC_List = []
+        
+        self._MANIFEST = ''
+        self._MANIFEST_File = ''
+        # self._MANIFEST_Dict = {}
+        
+        # self._Reading_Order_List = []
+        
+        self._Booktitle = ''
+        
+        self._MANIFEST_ID = 'manifest'
+        
+        # 21 keys
+        self.CONST_MANIFEST_KEY_LIST = ['@context', 
+                                        'conformsTo', 
+                                        'type', 
+                                        'id', 
+                                        'url', 
+                                        'name', 
+                                        'author', 
+                                        'readBy', 
+                                        'abridged', 
+                                        'accessMode', 
+                                        'accessModeSufficient', 
+                                        'accessibilityFeature', 
+                                        'accessibilityHazard', 
+                                        'accessibilitySummary', 
+                                        'dateModified', 
+                                        'datePublished', 
+                                        'inLanguage', 
+                                        'readingProgression', 
+                                        'duration', 
+                                        'readingOrder', 
                                         'resources']
         
         if os.path.isdir(item_Open):  
@@ -249,6 +310,7 @@ class Audiobook(QObject):
             self._is_LPF = False
             self._LPF_File = ''
             self._BOOK_DIR = item_Open
+            self.openFromDirectory(item_Open)
             
         elif os.path.isfile(item_Open):  
             print("It is a normal file")  
@@ -256,6 +318,7 @@ class Audiobook(QObject):
             if file_extension == '.lpf':
                  self._is_LPF = True
                  self._LPF_File = item_Open
+                 self.openFromLPT()
     
     @property          
     def dirty(self):
@@ -293,13 +356,47 @@ class Audiobook(QObject):
     def is_LPF(self):
         del self._is_LPF
     
-    
     def __del__(self):  
         print("Audiobook: del is called!")
+        
+    def getBookDir(self):
+        return self._BOOK_DIR
     
     def getID(self):
         return self._id
+    
+    def getManifestDict(self):
+        return self._MANIFEST
 
+    def getTOCList(self):
+        return self._TOC_List
+    
+    def getCoverDict(self):
+        if 'resources' in self.getManifestDict():
+            for item in self.getManifestDict()["resources"]:
+                if item.get("rel") is not None and item.get("rel") == "cover":
+                    return item
+        return {}  
+    
+    def getSupplementalList(self):
+        slist = []
+        if 'resources' in self.getManifestDict():
+            for item in self.getManifestDict()["resources"]:
+                if item.get("rel") is not None and item.get("rel") == "cover":
+                    continue
+                elif item.get("name") is not None and item.get("name") == "Primary Entry Page":
+                    continue
+                elif item.get("name") is not None and item.get("name") == "Table of Contents":
+                    continue
+                else:
+                    slist.append(item)
+        return slist    
+    
+    def getReadingOrderList(self):
+        if 'readingOrder' in self.getManifestDict():
+            return self.getManifestDict()['readingOrder']
+        return [] 
+    
     def checkResources(self):
         errorList = []
         for resource in self._MANIFEST['resources']:
@@ -776,6 +873,11 @@ if __name__ == '__main__':
     b = Audiobook.getInstance("D:\\Github\\audiobooks-samples\\case1")
     print(b)
     print(b.getID())
-    b.openFromDirectory("D:\\Github\\audiobooks-samples\\case1")
+    # b.openFromDirectory("D:\\Github\\audiobooks-samples\\case1")
     print(b.is_LPF)
+    print(b.getManifestDict())
+    print(b.getTOCList())
+    print(b.getCoverDict())
+    print(b.getReadingOrderList())
+    print(b.getSupplementalList())
     #sys.exit(app.exec_())

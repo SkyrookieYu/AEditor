@@ -63,7 +63,9 @@ class Controller(QObject):
     def show_MainWindow(self, dict_New):
         print("show_MainWindow for dict")
         # todo
-        self.mainWindow = MainWindow(dict_New)
+        self.book = Audiobook.getInstance(dict_New)
+        # todo
+        self.mainWindow = MainWindow()
         self.mainWindow.signal_exit.connect(self.exit)
         if hasattr(self, 'newBookWizard'):
             self.newBookWizard.close()
@@ -73,11 +75,8 @@ class Controller(QObject):
     def show_MainWindow(self, item):
         print("show_MainWindow for str")
         # todo
-        self.book = Audiobook.getInstace(item)
-        
-        
-        
-        self.mainWindow = MainWindow()
+        self.book = Audiobook.getInstance(item)
+        self.mainWindow = MainWindow(self.book)
         self.mainWindow.signal_exit.connect(self.exit)
         if hasattr(self, 'newBookWizard'):
             self.newBookWizard.close()

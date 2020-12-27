@@ -131,6 +131,15 @@ class CheckableComboBox(QComboBox):
                 res.append(self.model().item(i).data())
         return res
     
+    def setCurrentData(self, sList):
+        # set the list of selected items data
+        for item in sList:
+            for i in range(self.model().rowCount()):
+                if self.model().item(i).data() == item: 
+                    self.model().item(i).setCheckState(Qt.Checked)
+
+        
+    
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     comunes = ['Ameglia', 'Arcola', 'Bagnone', 'Bolano', 'Carrara', 'Casola', 'Castelnuovo Magra', 
@@ -143,5 +152,5 @@ if __name__ == "__main__":
     combo = CheckableComboBox()
     combo.addItems(comunes)
     combo.show()
-    
+    combo.setCurrentData(['Arcola', 'Bagnone'])
     sys.exit(app.exec_())
