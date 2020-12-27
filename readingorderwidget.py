@@ -13,11 +13,13 @@ from ui_readingorderitem import Ui_ReadingOrderItem
 # import librosa
 # from mimetypes import MimeTypes
 import filetype
+from multipledispatch import dispatch
 
 class ReadingOrderItem(QWidget):
     
     # switch_window = pyqtSignal()
     signal_resize_item = pyqtSignal(int, int, int)
+    
     
     def __init__(self, serialNo=-1):
         super(ReadingOrderItem, self).__init__()
@@ -68,7 +70,105 @@ class ReadingOrderItem(QWidget):
         
     
 class ReadingOrderWidget(QWidget):
+    
+    @dispatch(list)    
+    def __init__(self, rList, width=400, height=130):
+        super(ReadingOrderWidget, self).__init__()
+
+        self.__listWidgetItemSerialNo = 0 # Unique index for 
         
+        self.setGeometry(QRect(60, 70, 680, 790))
+        
+        self.resize(QSize(width + 100, height * 6))
+        
+        self.setStyleSheet("QListWidget::item { border-bottom: 1px red; }")
+        
+        self.listWidget = QListWidget(self)
+        self.listWidget.setStyleSheet("QListWidget::item { border-bottom: 1px solid black; }")
+    
+        self.__itemWidth = width
+        self.__itemHeight = height
+
+        layout = QVBoxLayout()  # QGridLayout(self)  # 
+        
+ 
+        horizontalLayout = QHBoxLayout()
+        horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        horizontalLayout.setObjectName("horizontalLayout")
+        self.pushButton_Add = QPushButton(self)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pushButton_Add.sizePolicy().hasHeightForWidth())
+        self.pushButton_Add.setSizePolicy(sizePolicy)
+        font = QFont()
+        font.setFamily("Courier New")
+        font.setPointSize(14)
+        self.pushButton_Add.setFont(font)
+        self.pushButton_Add.setObjectName("pushButton_Add")
+        horizontalLayout.addWidget(self.pushButton_Add)
+        self.pushButton_Remove = QPushButton(self)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pushButton_Remove.sizePolicy().hasHeightForWidth())
+        self.pushButton_Remove.setSizePolicy(sizePolicy)
+        font = QFont()
+        font.setFamily("Courier New")
+        font.setPointSize(14)
+        self.pushButton_Remove.setFont(font)
+        self.pushButton_Remove.setObjectName("pushButton_Remove")
+        horizontalLayout.addWidget(self.pushButton_Remove)
+        
+        self.label_ReadingOrderEditor = QLabel(self)
+        self.label_ReadingOrderEditor.setGeometry(QRect(220, 10, 301, 63))
+        font = QFont()
+        font.setFamily("Courier New")
+        font.setPointSize(24)
+        self.label_ReadingOrderEditor.setFont(font)
+        self.label_ReadingOrderEditor.setAlignment(Qt.AlignCenter)
+        self.label_ReadingOrderEditor.setObjectName("label_ReadingOrderEditor")
+        
+        layout.addWidget(self.label_ReadingOrderEditor)
+        layout.addWidget(self.listWidget)
+        layout.addLayout(horizontalLayout)
+        
+        self.setLayout(layout)
+        
+        self.retranslateUi(ReadingOrderWidget)      
+        
+        for r in rList:
+            url = r.get("url", "")
+            
+            item = QListWidgetItem()  
+            item.setText(str(self.listWidget.count()))
+            item.setSizeHint(self.getItemSize()) 
+            
+            roi = ReadingOrderItem(self.getSerialNo())
+            roi.signal_resize_item.connect(self.on_signal_resize_item)
+            
+            if url.startswith("http"):
+                roi.ui.radioButton_URL.setChecked(True)
+                roi.ui.lineEdit_URL.setText(url)
+                roi.ui.lineEdit_file.setText("")
+            else:
+                roi.ui.radioButton_file.setChecked(True)
+                roi.ui.lineEdit_file.setText(url)
+                roi.ui.lineEdit_URL.setText("")
+                    
+            roi.ui.lineEdit_duration.setText(r.get("duration", ""))    
+            roi.ui.lineEdit_title.setText(r.get("name", ""))   
+            
+            self.listWidget.addItem(item)
+            self.listWidget.setItemWidget(item, roi)
+            self.__listWidgetItemSerialNo += 1
+    
+    
+    
+    
+    
+    
+    @dispatch()    
     def __init__(self, width=400, height=130):
         super(ReadingOrderWidget, self).__init__()
 

@@ -129,8 +129,8 @@ class SupplementalListWidget(QWidget):
         self.retranslateUi(SupplementalListWidget)        
         # QMetaObject.connectSlotsByName(self)   
         
-        for item in sList:
-            url = item.get("url", "")
+        for s in sList:
+            url = s.get("url", "")
             if url != "":
                 item = QListWidgetItem()  
                 item.setText(str(self.listWidget.count()))
@@ -138,12 +138,14 @@ class SupplementalListWidget(QWidget):
                 
                 roi = SupplementalItem(self.getSerialNo())
                 if url.startswith("http"):
-                    roi.ui.radioButton_URL.setDown(True)
-                    roi.ui.lineEdit_URL.setText(url)    
+                    roi.ui.radioButton_URL.setChecked(True)
+                    roi.ui.lineEdit_URL.setText(url)
+                    roi.ui.lineEdit_file.setText("")
                 else:
-                    roi.ui.radioButton_file.setDown(True)
+                    roi.ui.radioButton_file.setChecked(True)
                     roi.ui.lineEdit_file.setText(url)
-                
+                    roi.ui.lineEdit_URL.setText("")
+                               
                 
                 
                 # roi.signal_resize_item.connect(self.on_signal_resize_item)

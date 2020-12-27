@@ -70,11 +70,11 @@ class MainWindow(QMainWindow):
         w = QWidget()
         layout = QHBoxLayout(w)
         #layout.addStretch(0)
-        self.readingOrderWidget = ReadingOrderWidget()
+        self.readingOrderWidget = ReadingOrderWidget(self.book.getReadingOrderList())
         layout.addWidget(self.readingOrderWidget)
         #layout.addStretch(0)      
         self.setCentralWidget(w)
-        self.readingOrderWidget.addItems(3)
+        # self.readingOrderWidget.addItems(3)
         
         
         layout = QVBoxLayout(self.ui.dockWidgetContents_2)

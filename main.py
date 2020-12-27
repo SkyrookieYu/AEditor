@@ -92,6 +92,12 @@ class Controller(QObject):
     '''    
         
     def exit(self):
+        print("exit")
+        self.mainWindow.close()
+        
+        del self.mainWindow
+        del self.book
+        
         QCoreApplication.quit()
 
 if __name__ == "__main__":
