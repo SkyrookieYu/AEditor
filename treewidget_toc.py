@@ -30,26 +30,16 @@ class TreeWidget_TOC(QMainWindow):
         # ----------------
         # Set TreeWidget Headers
         # ----------------
-        HEADERS = ( "Pickup one file/URL", "Description")
+        HEADERS = ( "Pickup one file/URL", "Description", "Start Time", "End Time")
         self.treeWidget.setColumnCount(len(HEADERS))
         self.treeWidget.setHeaderLabels(HEADERS)
  
-        # ----------------
-        # Add Custom QTreeWidgetItem
-        # ----------------
-        ## Add Items:
-        '''
-        for name in [ 'rock', 'paper', 'scissors' ]:
-            item = CustomTreeItem( self.treeWidget, name )
-            seconditem = CustomTreeItem( item, "paper" )
-        '''
         ## Set Columns Width to match content:
         for column in range(self.treeWidget.columnCount()):
             self.treeWidget.resizeColumnToContents(column)
             
         self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)  
         self.treeWidget.customContextMenuRequested.connect(self.on_menuContext)  
-        # self.actionOuvrir.triggered.connect(self.menu)  
         
         self.treeWidget.setDragDropMode(QAbstractItemView.InternalMove)
         
@@ -77,7 +67,7 @@ class TreeWidget_TOC(QMainWindow):
             self.traverseTreeAction = self.menu_context.addAction("travere")
             self.traverseTreeAction.triggered.connect(self.on_traverseTreeAction_triggered) # (self.getItemsRecursively) #
             self.generateTreeAction = self.menu_context.addAction("generate")
-            self.generateTreeAction.triggered.connect(lambda : self.on_generateTreeAction_triggered([{'level': 0, 'href': '1', 'title': '1', 'children': [{'level': 1, 'href': '1', 'title': '1.2', 'children': []}]}, {'level': 0, 'href': ' 2', 'title': '2', 'children': [{'level': 1, 'href': '1', 'title': '2.1', 'children': []}, {'level': 1, 'href': ' 2', 'title': '2.2', 'children': []}]}])) # (self.getItemsRecursively) #
+            self.generateTreeAction.triggered.connect(lambda : self.on_generateTreeAction_triggered([{'level': 0, 'href': '1#t=0,100.24', 'title': '111', 'children': []}, {'level': 0, 'href': ' 2#t=100.24,150.52', 'title': '2222', 'children': [{'level': 1, 'href': '  3#t=150.52,200.06', 'title': '3333', 'children': []}]}])) # (self.getItemsRecursively) #
             self.menu_context.exec_(self.treeWidget.mapToGlobal(point))
             
             
@@ -143,14 +133,20 @@ class TreeWidget_TOC(QMainWindow):
             if not item: 
                 return
             for m in range(item.childCount()): 
-                child = item.child(m)                
-                TOCList.append({"level" : level, "href" : child.comboBox.currentText(), "title" : child.lineEdit.text(), "children" : serchChildItem(child, level + 1)})   
+                child = item.child(m) 
+                if child.lineEdit_Start.text() != "" and child.lineEdit_End.text() != "":
+                    TOCList.append({"level" : level, "href" : child.comboBox.currentText() + "#t=" + child.lineEdit_Start.text() + "," + child.lineEdit_End.text(), "title" : child.lineEdit.text(), "children" : serchChildItem(child, level + 1)})
+                else:               
+                    TOCList.append({"level" : level, "href" : child.comboBox.currentText(), "title" : child.lineEdit.text(), "children" : serchChildItem(child, level + 1)})   
             return TOCList
             
         for i in range(self.treeWidget.topLevelItemCount()):
             item = self.treeWidget.topLevelItem(i)
             level = 0
-            self._TOCList.append({"level" : level, "href" : item.comboBox.currentText(), "title" : item.lineEdit.text(), "children" : serchChildItem(item, level + 1)})
+            if item.lineEdit_Start.text() != "" and item.lineEdit_End.text() != "":
+                self._TOCList.append({"level" : level, "href" : item.comboBox.currentText() + "#t=" + item.lineEdit_Start.text() + "," + item.lineEdit_End.text(), "title" : item.lineEdit.text(), "children" : serchChildItem(item, level + 1)})
+            else:
+                self._TOCList.append({"level" : level, "href" : item.comboBox.currentText(), "title" : item.lineEdit.text(), "children" : serchChildItem(item, level + 1)})
         print(self._TOCList)
 
     '''
@@ -171,7 +167,16 @@ class TreeWidget_TOC(QMainWindow):
                 lvl = child['level']
                 if lvl == level:
                     item = CustomTreeItem(parentItem)
-                    # item.comboxBox = 
+                    href = child["href"]
+                    indexOfSharpSign = href.find('#t=')
+                    if indexOfSharpSign == -1: # Not in
+                        pass
+                    else:
+                        timeStamp = href[indexOfSharpSign + 3:]
+                        [startTime, endTime] = timeStamp.split(',')
+                        item.lineEdit_Start.setText(startTime)
+                        item.lineEdit_End.setText(endTime)
+                        
                     item.lineEdit.setText(child["title"])
                     addChildItem(child, level + 1, item)
                     
@@ -183,6 +188,19 @@ class TreeWidget_TOC(QMainWindow):
                 if level == 0:
                     item = CustomTreeItem(self.treeWidget)
                     # item.comboxBox = 
+                    href = dict_TOC["href"]
+                    indexOfSharpSign = href.find('#t=')
+                    if indexOfSharpSign == -1: # Not in
+                        pass
+                    else:
+                        timeStamp = href[indexOfSharpSign + 3:]
+                        [startTime, endTime] = timeStamp.split(',')
+                        item.lineEdit_Start.setText(startTime)
+                        item.lineEdit_End.setText(endTime)
+                    
+                    # Todo : comboBox must pickup one item from Reading Order List
+                    # item.comboBox.setText(href[0:posOfTimeStamp])
+                    
                     item.lineEdit.setText(dict_TOC["title"])
                     self.treeWidget.addTopLevelItem(item) 
                     # if dict_TOC['children'] != []:
@@ -224,14 +242,28 @@ class CustomTreeItem(QTreeWidgetItem):
         self.lineEdit.customContextMenuRequested.connect(lambda point: self.on_customContextMenuRequested_triggered(self.lineEdit.mapToParent(point)))
         self.treeWidget().setItemWidget(self, 1, self.lineEdit)
  
-        ## Column 2 - Button:
-        '''
-        self.button = QPushButton()
-        self.button.setText( "button %s" % self.option )
-        self.treeWidget().setItemWidget(self, 2, self.button )
-        '''
-        ## Signals
-        # self.button.clicked.connect(self.buttonPressed )
+        ## Column 2 - Text:
+        self.lineEdit_Start = QLineEdit()
+        doubleValidator_Start = QDoubleValidator(self.lineEdit_Start)
+        doubleValidator_Start.setRange(0, 100000)
+        doubleValidator_Start.setNotation(QDoubleValidator.StandardNotation)
+        doubleValidator_Start.setDecimals(2)
+        self.lineEdit_Start.setValidator(doubleValidator_Start)
+        self.lineEdit_Start.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.lineEdit_Start.customContextMenuRequested.connect(lambda point: self.on_customContextMenuRequested_triggered(self.lineEdit_Start.mapToParent(point)))
+        self.treeWidget().setItemWidget(self, 2, self.lineEdit_Start)
+
+        
+        ## Column 3 - Text:
+        self.lineEdit_End = QLineEdit()
+        doubleValidator_End = QDoubleValidator(self.lineEdit_End)
+        doubleValidator_End.setRange(0, 100000)
+        doubleValidator_End.setNotation(QDoubleValidator.StandardNotation)
+        doubleValidator_End.setDecimals(2)
+        self.lineEdit_End.setValidator(doubleValidator_End)
+        self.lineEdit_End.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.lineEdit_End.customContextMenuRequested.connect(lambda point: self.on_customContextMenuRequested_triggered(self.lineEdit_End.mapToParent(point)))
+        self.treeWidget().setItemWidget(self, 3, self.lineEdit_End)
  
     @property
     def href(self):

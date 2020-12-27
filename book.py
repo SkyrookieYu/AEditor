@@ -5,15 +5,26 @@ Created on Wed Dec 23 03:40:52 2020
 @URL: https://github.com/SkyrookieYu/AEditor
 """
 
+
+
+from bs4 import BeautifulSoup
+import filetype
+import glob
+import json
+import os
+import re
 import sys
+from mutagen.mp3 import MP3
+import backports.tempfile
+
+
+
 from PyQt5.QtCore import *
 # from PyQt5.QtGui import *
 # from PyQt5.QtWidgets import *
 # import librosa # librosa puts PyInstaller into trouble 
 # from mimetypes import MimeTypes
-import filetype
-from mutagen.mp3 import MP3
-import backports.tempfile
+
 
 class Helper(QObject):
     def __init__(self):
@@ -80,6 +91,85 @@ class Audiobook: PEP + Publication Manifest + TOC
 
 class Audiobook(QObject):
     
+    _PEP_OPTION_1 = """<!DOCTYPE html>    
+<html>
+    <head>
+        <title>{}</title>
+        {}
+        <link rel=\"publication\" href=\"#{}\">
+        <script type=\"application/ld+json\" id=\"{}\">
+{}
+        </script>
+    </head>
+    <body>
+        <nav role=\"doc-toc\">
+            <h1>{}</h1>
+            <ol>
+{}
+            </ol>
+        </nav>
+    </body>
+</html>"""
+
+    _PEP_OPTION_2 = """<!DOCTYPE html>    
+<html>
+    <head>
+        <title>{}</title>
+        {}
+        <link rel=\"publication\" href=\"{}\">
+    </head>
+    <body>
+        <h1>{}</h1>
+    </body>
+</html>"""   
+
+    _TOC_OPTION_2 = """<!DOCTYPE html>    
+<html>
+    <head>
+        <title>Table of Contents</title>
+    </head>
+    <body>
+        <nav role=\"doc-toc\">
+            <h1>{}</h1>
+            <ol>
+{}
+            </ol>
+        </nav>
+    </body>
+</html>"""  
+
+    _PEP_OPTION_3 = """<!DOCTYPE html>    
+<html>
+    <head>
+        <title>{}</title>
+        {}
+        <link rel=\"publication\" href=\"{}\">
+    </head>
+    <body>
+        <nav role=\"doc-toc\">
+            <h1>{}</h1>
+            <ol>
+{}
+            </ol>
+        </nav>
+    </body>
+</html>"""
+
+    _TOC_OPTION_4 = """<!DOCTYPE html>    
+<html>
+    <head>
+        <title>Table of Contents</title>
+    </head>
+    <body>
+        <nav role=\"doc-toc\">
+            <h1>{}</h1>
+            <ol>
+{}
+            </ol>
+        </nav>
+    </body>
+</html>"""     
+
     # Singleton Pattern
     _instance = None
     
@@ -90,35 +180,19 @@ class Audiobook(QObject):
         return Audiobook._instance
     
     # Private Constructor
-    def __init__(self, item_Open):
+    def __init__(self, item_Open, parent=None):
+        super().__init__(parent)
+        
         if Audiobook._instance is not None:
             raise Exception('Only one instace of Book should exist!')
             return
               
-            
-            
-            
-            
-            
         Audiobook._instance = self
         self._id = id(self)
             
-        if os.path.isdir(item_Open):  
-            print("It is a directory")  
-            self._is_LPF = False
-            self._LPF_File = ''
-            self._BOOK_DIR = item_Open
-            
-        elif os.path.isfile(item_Open):  
-            print("It is a normal file")  
-            filename, file_extension = os.path.splitext(item_Open)
-            if file_extension == '.lpf':
-                 self._is_LPF = True
-                 self._LPF_File = item_Open
+
                  
-            
-            
-       
+
         self._optionNo = 1
         
         
@@ -169,6 +243,19 @@ class Audiobook(QObject):
                                         'duration', 
                                         'readingOrder', 
                                         'resources']
+        
+        if os.path.isdir(item_Open):  
+            print("It is a directory")  
+            self._is_LPF = False
+            self._LPF_File = ''
+            self._BOOK_DIR = item_Open
+            
+        elif os.path.isfile(item_Open):  
+            print("It is a normal file")  
+            filename, file_extension = os.path.splitext(item_Open)
+            if file_extension == '.lpf':
+                 self._is_LPF = True
+                 self._LPF_File = item_Open
     
     @property          
     def dirty(self):
@@ -212,6 +299,217 @@ class Audiobook(QObject):
     
     def getID(self):
         return self._id
+
+    def checkResources(self):
+        errorList = []
+        for resource in self._MANIFEST['resources']:
+            if 'url' in resource.keys():
+                print(resource['url'])
+                url = resource['url']
+                m = re.search(r'^https?://', url) 
+                if m: # http(s)://
+                    res = Helper.checkURLAvailability(url)
+                    print(res)
+                    if not res:
+                        errorList.append(url)
+                else: # local
+                    print('not a URL')
+                    directory = self._BOOK_DIR
+                    if os.path.exists(directory + "/" + url):
+                        print('{} exists'.format(directory + "\\" + url))
+                    else:
+                        print('{} doesn\'t exist'.format(directory + "\\" + url))
+                        errorList.append(directory + "\\" + url)
+        return errorList
+                                    
+    def saveIntoDirectory(self, directory=None):
+        print('saveIntoDirectory')
+        errorList = self.checkResources()
+        if not errorList:
+            print('Resources check passed')
+        else:
+            print('Not-found list : {}'.format(errorList))
+        # if self.__BOOK_DIR:
+        #     directory = self.__BOOK_DIR
+        if self._optionNo == 1:
+            print("self._optionNo = 1")
+            fullManifestContent = ""
+            fullTOCContent = ""
+            for url, value in self._TOC_List:
+                print(url, " = ", value)
+                fullTOCContent = fullTOCContent + \
+                    "\t\t\t\t<li><a href=\"" + url + "\">" + \
+                    value + \
+                    "</a></li>\n"
+                    
+            fullTOCContent = fullTOCContent[:-1] 
+            """
+            <meta name=\"stylesheet\" src=\"{}\">
+            """
+            fullCSSContent = ""
+            for css in self._CSS_File_List:
+                fullCSSContent += '<meta name=\"stylesheet\" src=\"{}\">'.format(css)
+            fullHTMLContent = self._PEP_OPTION_1.format(self._Booktitle, 
+                                                    fullCSSContent, 
+                                                    self._MANIFEST_ID,
+                                                    self._MANIFEST_ID,
+                                                    json.dumps(self._MANIFEST, indent=4), # json.dumps(self.__MANIFEST)
+                                                    self._Booktitle,
+                                                    fullTOCContent)
+            print(fullHTMLContent)
+            with open(directory + "\\" + "index.html", "w", encoding="utf-8") as f:
+            # 将爬取的页面              
+                f.write(fullHTMLContent)
+
+        elif self._optionNo == 2:
+            print("self._optionNo = 2")
+            
+            # fullManifestContent = ""
+            fullCSSContent = ""
+            for css in self._CSS_File_List:
+                fullCSSContent += '<meta name=\"stylesheet\" src=\"{}\">'.format(css)
+            fullPEPContent = self._PEP_OPTION_2.format(self._Booktitle,
+                                                       fullCSSContent,
+                                                       self._MANIFEST_File, # json.dumps(self.__MANIFEST)
+                                                       self._Booktitle)
+            
+            with open(directory + "\\" + "index.html", "w", encoding="utf-8") as f:
+            # 将爬取的页面              
+                f.write(fullPEPContent)
+                
+            li_tags = ""
+            for url, value in self._TOC_List:
+                print(url, " = ", value)
+                li_tags = li_tags + \
+                    "\t\t\t\t<li><a href=\"" + url + "\">" + \
+                    value + \
+                    "</a></li>\n"
+                    
+            li_tags = li_tags[:-1]    
+            fullTOCContent = self._TOC_OPTION_2.format(self._Booktitle,
+                                                       li_tags)
+            
+            with open(directory + "\\" + self._TOC_File, "w", encoding="utf-8") as f:
+            # 将爬取的页面              
+                f.write(fullTOCContent)            
+            
+            with open(directory + "\\" + self._MANIFEST_File, "w", encoding="utf-8") as f:
+            # 将爬取的页面              
+                f.write(json.dumps(self._MANIFEST, indent=4))                
+            
+            
+            
+        elif self._optionNo == 3:
+            print("self._optionNo = 3")
+
+            li_tags = ""
+            for url, value in self._TOC_List:
+                print(url, " = ", value)
+                li_tags = li_tags + \
+                    "\t\t\t\t<li><a href=\"" + url + "\">" + \
+                    value + \
+                    "</a></li>\n"
+                    
+            li_tags = li_tags[:-1]    
+            
+            # fullPEPContent = ""
+            fullCSSContent = ""
+            for css in self._CSS_File_List:
+                fullCSSContent += '<meta name=\"stylesheet\" src=\"{}\">'.format(css)
+            fullPEPContent = self._PEP_OPTION_3.format(self._Booktitle,
+                                                       fullCSSContent,
+                                                       self._MANIFEST_File, # json.dumps(self.__MANIFEST)
+                                                       self._Booktitle,
+                                                       li_tags)
+            
+            with open(directory + "\\" + "index.html", "w", encoding="utf-8") as f:
+            # 将爬取的页面              
+                f.write(fullPEPContent)
+                
+            with open(directory + "\\" + self._MANIFEST_File, "w", encoding="utf-8") as f:
+            # 将爬取的页面              
+                f.write(json.dumps(self._MANIFEST, indent=4))               
+            
+            
+            
+        elif self._optionNo == 4:
+            print("self._optionNo = 4")   
+            
+            li_tags = ""
+            for url, value in self._TOC_List:
+                print(url, " = ", value)
+                li_tags = li_tags + \
+                    "\t\t\t\t<li><a href=\"" + url + "\">" + \
+                    value + \
+                    "</a></li>\n"
+                    
+            li_tags = li_tags[:-1]    
+            fullTOCContent = self._TOC_OPTION_4.format(self._Booktitle,
+                                                       li_tags)
+            
+            with open(directory + "\\" + self._TOC_File, "w", encoding="utf-8") as f:
+            # 将爬取的页面              
+                f.write(fullTOCContent)               
+            
+            
+            with open(directory + "\\" + self._MANIFEST_File, "w", encoding="utf-8") as f:
+            # 将爬取的页面              
+                f.write(json.dumps(self._MANIFEST, indent=4))               
+                        
+            
+            
+            
+        elif self._optionNo == 5:
+            print("self._optionNo = 5")  
+            
+            with open(directory + "\\" + self._MANIFEST_File, "w", encoding="utf-8") as f:         
+                f.write(json.dumps(self._MANIFEST, indent=4))    
+        
+        else:
+            print("self._optionNo = ???")  
+            
+        if self.dirty:
+            self.dirty = False
+    def checkResources(self):
+        errorList = []
+        for resource in self._MANIFEST['resources']:
+            if 'url' in resource.keys():
+                print(resource['url'])
+                url = resource['url']
+                m = re.search(r'^https?://', url) 
+                if m: # http(s)://
+                    res = self.helper.checkURLAvailability(url)
+                    print(res)
+                    if not res:
+                        errorList.append(url)
+                else: # local
+                    print('not a URL')
+                    directory = self._BOOK_DIR
+                    if os.path.exists(directory + "/" + url):
+                        print('{} exists'.format(directory + "\\" + url))
+                    else:
+                        print('{} doesn\'t exist'.format(directory + "\\" + url))
+                        errorList.append(directory + "\\" + url)
+        return errorList
+    
+    def determineOption(self):
+        if self._PEP_File and not self._TOC_File and not self._MANIFEST_File:
+            self._optionNo = 1
+        elif self._PEP_File and self._TOC_File and self._MANIFEST_File:
+            self._optionNo = 2
+        elif self._PEP_File and not self._TOC_File and self._MANIFEST_File:
+            self._optionNo = 3
+        elif not self._PEP_File and self._TOC_File and self._MANIFEST_File:
+            self._optionNo = 4
+        elif not self._PEP_File and not self._TOC_File and self._MANIFEST_File:
+            self._optionNo = 5
+            
+    def setOptionAndFilenames(self, opt_No, pep_file, toc_file, manifest_file):
+        print("New an audiobook")
+        self._optionNo = opt_No
+        self._PEP_File = pep_file
+        self._TOC_File = toc_file
+        self._MANIFEST_File = manifest_file
     
     def openFromDirectory(self, directory):
         '''
@@ -227,8 +525,7 @@ class Audiobook(QObject):
             for li in ol.find_all("li", recursive = False):
                 result = {}
                 a_tag = li.find('a', recursive = False)
-                # a_tag['href'], a_tag.get_text()
-                # print(a_tag)
+                
                 result['level'] = lvl
                 result['href'] = a_tag['href']
                 result['title'] = a_tag.get_text()
@@ -282,7 +579,7 @@ class Audiobook(QObject):
                         #print("manifestStr = ", "*" * 70, "\n", manifestStr)
                         fo.close()
                         self._MANIFEST = json.loads(manifestStr)
-                        print("MANIFEST ===\n", "*" * 70, "\n", json.dumps(self.__MANIFEST, indent=4))  
+                        print("MANIFEST ===\n", "*" * 70, "\n", json.dumps(self._MANIFEST, indent=4))  
             
             
             csses = soup.select('head > link[rel=\"stylesheet\"]')
@@ -311,7 +608,7 @@ class Audiobook(QObject):
                 print('toc = ', toc)
                 print('toc.name =', toc.name)
                 print("TOC ===\n", "*" * 70, "\n", toc)
-                self.__TOC = toc
+                self._TOC = toc
                 # self.__TOC_File = "index.html"
                 
                 '''
@@ -353,22 +650,23 @@ class Audiobook(QObject):
                 Old style: parse other html files directly
                 Correct(New) style: 
                 """
-                resources = self.__MANIFEST["resources"]
+                resources = self._MANIFEST["resources"]
                 if resources:
                     for resource in resources:
                         print(resource.keys())
                         
                         if "rel" in resource.keys() and resource["rel"] == "contents":
-                            tocFlag = True
+                            tocFlag = False
                             print(resource['url'])
-                            tocSoup = BeautifulSoup(open(directory + "\\" + resource["url"]), features='html5lib')
+                            tocSoup = BeautifulSoup(open(directory + "\\" + resource["url"], encoding="utf-8"), features='html5lib')
                             toc = tocSoup.select_one('[role="doc-toc"]') # eg. <nav role="doc-toc">
                             if toc:
                                 print("TOC ===\n", "*" * 70, "\n", toc.get_text())
-                                self.__TOC = toc
-                                self.__TOC_File = resource["url"]
-                                print(self.__TOC_File)
+                                self._TOC = toc
+                                self._TOC_File = resource["url"]
+                                print(self._TOC_File)
 
+                                '''
                                 li_tags = toc.find_all('li')  
                         
                                 for child in toc.recursiveChildGenerator(): # https://www.it1352.com/330662.html
@@ -387,6 +685,15 @@ class Audiobook(QObject):
                                     self.__TOC_List.append((a_tag['href'], a_tag.get_text()))
                                 
                                 print(self.__TOC_List)
+                                '''
+                                
+                                ol = toc.find('ol', recursive = False)
+                                ul = toc.find('ul', recursive = False)
+                                if ol:
+                                    self._TOC_List = dictify(ol, 0)
+                                elif ul:
+                                    self._TOC_List = dictify(ul, 0, tagName = "ul")
+                                print("dictify ===\n", "*" * 70, "\n", self._TOC_List)
                                 
                                 tocFlag = True
                                 break  
@@ -401,26 +708,26 @@ class Audiobook(QObject):
             Correct(New) style: no index.html, then publication.json must appear
             """
             
-            with open(directory + "/publication.json") as manifest_file: 
-                self.__MANIFEST = json.load(manifest_file)
-                self.__MANIFEST_File = "publication.json"
-                print("MANIFEST ===\n", "*" * 70, "\n", self.__MANIFEST)  
+            with open(directory + "/publication.json", encoding="utf-8") as manifest_file: 
+                self._MANIFEST = json.load(manifest_file)
+                self._MANIFEST_File = "publication.json"
+                print("MANIFEST ===\n", "*" * 70, "\n", self._MANIFEST)  
             
-            resources = self.__MANIFEST["resources"]
+            resources = self._MANIFEST["resources"]
             if resources:
                 for resource in resources:
                     # print(resource.keys())
                     
                     if "rel" in resource.keys() and resource["rel"] == "contents":
                         print(resource['url'])
-                        tocSoup = BeautifulSoup(open(directory + "\\" + resource["url"]), features='html5lib')
+                        tocSoup = BeautifulSoup(open(directory + "\\" + resource["url"], encoding="utf-8"), features='html5lib')
                         toc = tocSoup.select_one('[role="doc-toc"]') # eg. <nav role="doc-toc">
                         if toc:
                             print("TOC ===\n", "*" * 70, "\n", toc.get_text())
-                            self.__TOC = toc
-                            self.__TOC_File = resource["url"]
-                            print(self.__TOC_File)
-
+                            self._TOC = toc
+                            self._TOC_File = resource["url"]
+                            print(self._TOC_File)
+                            '''
                             li_tags = toc.find_all('li')  
                     
                             for child in toc.recursiveChildGenerator(): # https://www.it1352.com/330662.html
@@ -438,6 +745,15 @@ class Audiobook(QObject):
                                 self.__TOC_List.append((a_tag['href'], a_tag.get_text()))
                             
                             print(self.__TOC_List)
+                            '''
+                            
+                            ol = toc.find('ol', recursive = False)
+                            ul = toc.find('ul', recursive = False)
+                            if ol:
+                                self._TOC_List = dictify(ol, 0)
+                            elif ul:
+                                self._TOC_List = dictify(ul, 0, tagName = "ul")
+                            print("dictify ===\n", "*" * 70, "\n", self._TOC_List)
                             
                             tocFlag = True
                             break   
@@ -446,19 +762,20 @@ class Audiobook(QObject):
             print("Fatal error!")   
             return
                            
-        if self.__TOC or self.__MANIFEST:
-            self.__loaded = True
+        if self._TOC or self._MANIFEST:
+            self._loaded = True
             # self.__dirty = False
             self.determineOption()
-            print(self.__optionNo)
+            print(self._optionNo)
             
             # For Test
-            self.__dirty = True
+            self._dirty = True
     
 if __name__ == '__main__':
     #app = QApplication(sys.argv)
     b = Audiobook.getInstance("D:\\Github\\audiobooks-samples\\case1")
     print(b)
     print(b.getID())
+    b.openFromDirectory("D:\\Github\\audiobooks-samples\\case1")
     print(b.is_LPF)
     #sys.exit(app.exec_())
