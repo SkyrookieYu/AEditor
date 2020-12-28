@@ -71,8 +71,8 @@ class ReadingOrderItem(QWidget):
     
 class ReadingOrderWidget(QWidget):
     
-    @dispatch(list)    
-    def __init__(self, rList, width=400, height=130):
+    @dispatch(list, str)    
+    def __init__(self, rList, bookDir, width=400, height=130):
         super(ReadingOrderWidget, self).__init__()
 
         self.__listWidgetItemSerialNo = 0 # Unique index for 
@@ -138,31 +138,65 @@ class ReadingOrderWidget(QWidget):
         self.retranslateUi(ReadingOrderWidget)      
         
         for r in rList:
-            url = r.get("url", "")
-            
-            item = QListWidgetItem()  
-            item.setText(str(self.listWidget.count()))
-            item.setSizeHint(self.getItemSize()) 
-            
-            roi = ReadingOrderItem(self.getSerialNo())
-            roi.signal_resize_item.connect(self.on_signal_resize_item)
-            
-            if url.startswith("http"):
-                roi.ui.radioButton_URL.setChecked(True)
-                roi.ui.lineEdit_URL.setText(url)
-                roi.ui.lineEdit_file.setText("")
-            else:
-                roi.ui.radioButton_file.setChecked(True)
-                roi.ui.lineEdit_file.setText(url)
-                roi.ui.lineEdit_URL.setText("")
+            if isinstance(r, dict):
+                url = r.get("url", "")
+                
+                item = QListWidgetItem()  
+                item.setText(str(self.listWidget.count()))
+                item.setSizeHint(self.getItemSize()) 
+                
+                roi = ReadingOrderItem(self.getSerialNo())
+                roi.signal_resize_item.connect(self.on_signal_resize_item)
+                
+                if url.startswith("http"):
+                    roi.ui.radioButton_URL.setChecked(True)
+                    roi.ui.lineEdit_URL.setText(url)
+                    roi.ui.lineEdit_file.setText("")
+                else:
+                    roi.ui.radioButton_file.setChecked(True)
+                    roi.ui.lineEdit_file.setText(url)
+                    roi.ui.lineEdit_URL.setText("")
+                        
+                roi.ui.lineEdit_duration.setText(r.get("duration", ""))    
+                roi.ui.lineEdit_title.setText(r.get("name", ""))   
+                
+                self.listWidget.addItem(item)
+                self.listWidget.setItemWidget(item, roi)
+                self.__listWidgetItemSerialNo += 1
+                
+            elif isinstance(r, str):
+                print("isinstance(r, str)")
+                url = r
+                
+                item = QListWidgetItem()  
+                item.setText(str(self.listWidget.count()))
+                item.setSizeHint(self.getItemSize()) 
+                
+                roi = ReadingOrderItem(self.getSerialNo())
+                roi.signal_resize_item.connect(self.on_signal_resize_item)
+                
+                if url.startswith("http"):
+                    roi.ui.radioButton_URL.setChecked(True)
+                    roi.ui.lineEdit_URL.setText(url)
+                    roi.ui.lineEdit_file.setText("")
+                else:
+                    roi.ui.radioButton_file.setChecked(True)
+                    roi.ui.lineEdit_file.setText(url)
+                    roi.ui.lineEdit_URL.setText("")
                     
-            roi.ui.lineEdit_duration.setText(r.get("duration", ""))    
-            roi.ui.lineEdit_title.setText(r.get("name", ""))   
-            
-            self.listWidget.addItem(item)
-            self.listWidget.setItemWidget(item, roi)
-            self.__listWidgetItemSerialNo += 1
-    
+                    kind = filetype.guess(bookDir + r'/' + url)
+                    if kind is None:
+                        print('Cannot guess file type!')
+                    else:    
+                        print('File extension: %s' % kind.extension)
+                        print('File MIME type: %s' % kind.mime)
+                        if kind.extension == ".mp3" and kind.mime.beginswith("audio"):
+                            duration = Helper.getMP3Duration(bookDir + r'/' + url)
+                            roi.ui.lineEdit_duration.setText("PT" + str(duration) + "S")    
+                                       
+                self.listWidget.addItem(item)
+                self.listWidget.setItemWidget(item, roi)
+                self.__listWidgetItemSerialNo += 1    
     
     
     
@@ -232,6 +266,9 @@ class ReadingOrderWidget(QWidget):
         
         self.setLayout(layout)
         
+        self.pushButton_Add.clicked.connect(self.addItems)
+        self.pushButton_Remove.clicked.connect(self.removeSelectedItems)
+        
         self.retranslateUi(ReadingOrderWidget)        
    
     def retranslateUi(self, ReadingOrderWidget):
@@ -247,6 +284,7 @@ class ReadingOrderWidget(QWidget):
     def getSerialNo(self):
         return self.__listWidgetItemSerialNo
     
+    @pyqtSlot()
     def addItems(self, number=1):       
         for i in range(number):
             item = QListWidgetItem()  
@@ -260,11 +298,13 @@ class ReadingOrderWidget(QWidget):
             self.listWidget.setItemWidget(item, roi)
             self.__listWidgetItemSerialNo += 1
 
+    @pyqtSlot()
     def removeSelectedItems(self):       
         items = self.listWidget.selectedItems()  
         for item in items:
             oldItem = self.listWidget.takeItem(self.listWidget.row(item))
             del oldItem
+        self.resortItems()
 
     @pyqtSlot(int, int, int)
     def on_signal_resize_item(self, serialNo, width, height):  
@@ -272,6 +312,10 @@ class ReadingOrderWidget(QWidget):
             if self.listWidget.itemWidget(self.listWidget.item(i)).serialNo() == serialNo:
                 self.listWidget.item(i).setSizeHint(QSize(width, height)) # (width, height)
         print("item[{}] = {} * {}".format(serialNo, width, height))
+        
+    def resortItems(self):
+        for i in range(self.listWidget.count()):
+            self.listWidget.item(i).setText(str(i))
   
 
 if __name__ == "__main__":

@@ -17,7 +17,7 @@ import sys
 from mutagen.mp3 import MP3
 import backports.tempfile
 from multipledispatch import dispatch
-
+import zipfile
 
 from PyQt5.QtCore import *
 # from PyQt5.QtGui import *
@@ -179,6 +179,9 @@ class Audiobook(QObject):
             Audiobook(item_Open)
         return Audiobook._instance
     
+    '''
+    {"saveDir": saveDir, "bookTitle": bookTitle, "author": author, "publisher": publisher, "readBy": readBy}
+    '''
     @dispatch(dict) # Private Constructor
     def __init__(self, dict_New):
         super().__init__(None)
@@ -190,7 +193,8 @@ class Audiobook(QObject):
         self._id = id(self)
             
 
-                 
+
+        
 
         self._optionNo = 1
         
@@ -212,7 +216,7 @@ class Audiobook(QObject):
         
         self._Reading_Order_List = []
         
-        self._Booktitle = ''
+        
         
         self._MANIFEST_ID = 'manifest'
         
@@ -243,6 +247,14 @@ class Audiobook(QObject):
                                         'duration', 
                                         'readingOrder', 
                                         'resources']    
+        
+        self._BOOK_DIR = dict_New.get("saveDir", "")
+        self._Booktitle = dict_New.get("bookTitle", "")
+        self._MANIFEST["author"] = dict_New.get("author", "")
+        self._MANIFEST["publisher"] = dict_New.get("publisher", "")
+        self._MANIFEST["readBy"] = dict_New.get("readBy", "")
+    
+        
     
     
     
@@ -318,7 +330,8 @@ class Audiobook(QObject):
             if file_extension == '.lpf':
                  self._is_LPF = True
                  self._LPF_File = item_Open
-                 self.openFromLPT()
+                 self.openFromLPF(item_Open, 'D:\\lpf_temp' + '\\' + QUuid.createUuid().toString()) # QStandardPaths.writableLocation(QStandardPaths.CacheLocation))
+                 self.openFromDirectory(self.getBookDir())
     
     @property          
     def dirty(self):
@@ -608,6 +621,27 @@ class Audiobook(QObject):
         self._TOC_File = toc_file
         self._MANIFEST_File = manifest_file
     
+    def openFromLPF(self, lpf_file, unzip_destination):
+        """
+        self.__is_LPF = False
+        self.__LPF_File = ""
+        self.__BOOK_DIR = ""
+        """
+        print('openFromLPF')
+               
+        unzip_files = zipfile.ZipFile(lpf_file, mode='r', compression=zipfile.ZIP_DEFLATED)
+        print(unzip_files)
+        for f in unzip_files.namelist(): 
+            print(f)
+        
+        # unzip_files.extractall(r'D:/Github/AudiobookEditor/unzip_files')
+        unzip_files.extractall(unzip_destination)
+        unzip_files.close()
+        self._is_LPF = True
+        self._LPF_File = lpf_file
+        self._BOOK_DIR = unzip_destination
+        return True    
+    
     def openFromDirectory(self, directory):
         '''
         self._is_LPF = False
@@ -747,7 +781,7 @@ class Audiobook(QObject):
                 Old style: parse other html files directly
                 Correct(New) style: 
                 """
-                resources = self._MANIFEST["resources"]
+                resources = self._MANIFEST.get("resources", None)
                 if resources:
                     for resource in resources:
                         print(resource.keys())
