@@ -21,6 +21,10 @@ import time
 import urllib.request
 import zipfile
 from multipledispatch import dispatch
+import json
+import jsonschema
+import subprocess
+# subprocess.call(["python", "myscript.py"])
 
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -52,6 +56,9 @@ class MainWindow(QMainWindow):
         self._translate = QCoreApplication.translate
 
         self.ui.action_Exit.triggered.connect(self._exit)
+        self.ui.action_Save.triggered.connect(self._save)
+        self.ui.action_Close.triggered.connect(self._close)
+        self.ui.action_Validate.triggered.connect(self._validate)
         
         layout = QVBoxLayout(self.ui.tab_Metadata)
         self.publicationManifest = PublicationManifest(self.book.getManifestDict())
@@ -127,3 +134,31 @@ class MainWindow(QMainWindow):
         
     def _exit(self):
         self.signal_exit.emit()
+        
+    def _save(self):
+        self.book.on_action_Save_Audiobook_triggered()
+
+    def _close(self):
+        self.book.on_action_Save_Audiobook_triggered()
+        
+    def _validate(self):
+        ret = subprocess.call("python jsonschemavalidator.py", shell = True)
+        print(ret)
+        '''
+        with open('audiobooks.schema.json', 'r', encoding="utf-8") as file_Json:
+            schema = json.load(file_Json)
+
+            
+            instance_test = self.book.getManifestDict()    # {"name" : "Eggs", "price" : 34.99}
+            # schema = 
+            ret = False
+            try:
+                jsonschema.validate(instance = instance_test, schema = schema)
+                # print("validation is passed")
+                ret = True
+            except jsonschema.ValidationError as ve:
+                print(ve.message)
+        
+            if ret:
+                print("Congratulations!")        
+        '''

@@ -410,6 +410,31 @@ class Audiobook(QObject):
             return self.getManifestDict()['readingOrder']
         return [] 
     
+    @pyqtSlot()  
+    def on_action_Save_Audiobook_triggered(self):  
+        print("on_action_Save_LPF_triggeredd")
+        if self.is_LPF:
+            print("Save as a LPF file!")
+            self.saveIntoDirectory(self.getBookDir())
+            fdlg = QFileDialog()
+            fdlg.setFileMode(QFileDialog.AnyFile)
+            
+        
+            saveLPFName, _ = fdlg.getSaveFileName(self, 'Save As Audiobook(lpf)', '.', 'Audiobooks (*.lpf)')
+            if saveLPFName:
+                print(saveLPFName)
+                self.saveAsLPF(saveLPFName)
+                return
+            
+            
+            
+            
+            
+            return
+        else:
+            self.saveIntoDirectory(self.getBookDir())
+            return
+    
     def checkResources(self):
         errorList = []
         for resource in self._MANIFEST['resources']:
@@ -432,15 +457,16 @@ class Audiobook(QObject):
                         errorList.append(directory + "\\" + url)
         return errorList
                                     
-    def saveIntoDirectory(self, directory=None):
+    def saveIntoDirectory(self, directory = None):
         print('saveIntoDirectory')
         errorList = self.checkResources()
         if not errorList:
             print('Resources check passed')
         else:
             print('Not-found list : {}'.format(errorList))
-        # if self.__BOOK_DIR:
-        #     directory = self.__BOOK_DIR
+        if directory is None:
+            directory = self._BOOK_DIR
+        
         if self._optionNo == 1:
             print("self._optionNo = 1")
             fullManifestContent = ""
@@ -513,7 +539,7 @@ class Audiobook(QObject):
             print("self._optionNo = 3")
 
             li_tags = ""
-            for url, value in self._TOC_List:
+            for url, value in self._CSS_File_List:
                 print(url, " = ", value)
                 li_tags = li_tags + \
                     "\t\t\t\t<li><a href=\"" + url + "\">" + \
@@ -580,6 +606,7 @@ class Audiobook(QObject):
             
         if self.dirty:
             self.dirty = False
+            
     def checkResources(self):
         errorList = []
         for resource in self._MANIFEST['resources']:
@@ -742,28 +769,7 @@ class Audiobook(QObject):
                 self._TOC = toc
                 # self.__TOC_File = "index.html"
                 
-                '''
-                li_tags = toc.find_all('li')  
 
-                current_tag = toc
-                parent_tag = None
-                
-                for child in toc.recursiveChildGenerator(): # https://www.it1352.com/330662.html
-                    name = getattr(child, "name", None)
-                    if name is not None:
-                        print("Child tagname = ", name, " parent tagname = ", child.parent.name," \n")
-                        if name == 'li':
-                            print('LI found!\n')
-                            break
-                    elif not child.isspace(): # leaf node, don't print spaces
-                    #else:
-                        print(child)   
-                             
-                for li_tag in li_tags:
-                    a_tag = li_tag.find('a')
-                    self._TOC_List.append((a_tag['href'], a_tag.get_text()))
-                
-                '''
                 ol = toc.find('ol', recursive = False)
                 ul = toc.find('ul', recursive = False)
                 if ol:
@@ -797,27 +803,7 @@ class Audiobook(QObject):
                                 self._TOC_File = resource["url"]
                                 print(self._TOC_File)
 
-                                '''
-                                li_tags = toc.find_all('li')  
-                        
-                                for child in toc.recursiveChildGenerator(): # https://www.it1352.com/330662.html
-                                    name = getattr(child, "name", None)
-                                    if name is not None:
-                                        print("Child tagname = ", name, "\n")
-                                        if name == 'li':
-                                            print('LI found!\n')
-                                            break
-                                    elif not child.isspace(): # leaf node, don't print spaces
-                                    #else:
-                                        print(child)   
-                                        
-                                for li_tag in li_tags:
-                                    a_tag = li_tag.find('a')
-                                    self.__TOC_List.append((a_tag['href'], a_tag.get_text()))
-                                
-                                print(self.__TOC_List)
-                                '''
-                                
+                               
                                 ol = toc.find('ol', recursive = False)
                                 ul = toc.find('ul', recursive = False)
                                 if ol:
@@ -858,25 +844,6 @@ class Audiobook(QObject):
                             self._TOC = toc
                             self._TOC_File = resource["url"]
                             print(self._TOC_File)
-                            '''
-                            li_tags = toc.find_all('li')  
-                    
-                            for child in toc.recursiveChildGenerator(): # https://www.it1352.com/330662.html
-                                name = getattr(child, "name", None)
-                                if name is not None:
-                                    print("Child tagname = ", name, "\n")
-                                    if name == 'li':
-                                        print('LI found!\n')
-                                        break
-                                elif not child.isspace(): # leaf node, don't print spaces
-                                    print(child)   
-                                    
-                            for li_tag in li_tags:
-                                a_tag = li_tag.find('a')
-                                self.__TOC_List.append((a_tag['href'], a_tag.get_text()))
-                            
-                            print(self.__TOC_List)
-                            '''
                             
                             ol = toc.find('ol', recursive = False)
                             ul = toc.find('ul', recursive = False)
