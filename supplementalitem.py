@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import *
 # from mimetypes import MimeTypes
 import filetype
 from multipledispatch import dispatch 
-
+from book import Audiobook
 
 
 from ui_supplementalitem import Ui_SupplementalItem
@@ -302,6 +302,38 @@ class SupplementalListWidget(QWidget):
     def resortItems(self):
         for i in range(self.listWidget.count()):
             self.listWidget.item(i).setText(str(i))
+            
+    def save(self):
+        supplementalList = []
+        
+        for i in range(self.listWidget.count()):
+            item = self.listWidget.itemWidget(self.listWidget.item(i))
+            if item.ui.radioButton_URL.isChecked():
+                url = item.ui.lineEdit_URL.text()
+                
+                filename, file_extension = os.path.splitext(url)
+                if file_extension == ".mp3":
+
+                    supplementalList.append({"url" : url, "encodingFormat" : 'audio/mpeg'})
+                    pass   
+                
+            else:
+                url = item.ui.lineEdit_file.text()
+                
+                book = Audiobook.getInstance()
+                kind = filetype.guess(book.getBookDir() + r'/' + url)
+                
+                if kind is None:
+                    print('Cannot guess file type!')
+                else:    
+                    print('File extension: %s' % kind.extension)
+                    print('File MIME type: %s' % kind.mime)
+                    if kind.extension == ".mp3" and kind.mime.beginswith("audio"):
+                        duration = Helper.getMP3Duration(url)
+                        roi.ui.lineEdit_duration.setText("PT" + str(duration) + "S")    
+                        supplementalList.append({"url" : url, "encodingFormat" : kind.mime})
+                        
+        return supplementalList
 
     '''
     @pyqtSlot(int, int, int)

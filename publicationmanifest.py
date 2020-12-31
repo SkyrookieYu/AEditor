@@ -50,13 +50,45 @@ class PublicationManifest(QWidget):
         self.ui.lineEdit_cover.setText(manifestDict.get("cover", ""))
         self.ui.lineEdit_duration.setText(manifestDict.get("duration", ""))
         self.ui.dateTimeEdit_dateModified.setDateTime(QDateTime.fromString(manifestDict.get("dateModified", "")))
-        self.ui.dateTimeEdit_datePublished.setDateTime(QDateTime.fromString(manifestDict.get("datePublished", "")))
+        self.ui.dateEdit_datePublished.setDate(QDate.fromString(manifestDict.get("datePublished", "2000-1-1")))
         self.ui.lineEdit_id.setText(manifestDict.get("id", ""))
         #manifestDict.get("inLanguage", ""))
         self.ui.lineEdit_readBy.setText(manifestDict.get("readBy", ""))
         self.ui.lineEdit_readingProgression.setText(manifestDict.get("readingProgression", ""))
         self.ui.lineEdit_type.setText(manifestDict.get("type", "CreativeWork"))
         self.ui.lineEdit_url.setText(manifestDict.get("url", ""))
+        
+    def save(self):
+        dict_pm = {}
+        
+        # Required 
+        dict_pm["name"] = self.ui.lineEdit_name.text()
+        dict_pm["conformsTo"] ="https://www.w3.org/TR/audiobooks/" 
+        dict_pm["@context"] = ["https://schema.org", "https://www.w3.org/ns/pub-context"] 
+        
+        # Optional
+        
+        dict_pm["abridged"] = self.ui.comboBox_abridged.currentText()
+        
+        dict_pm["accessibilityFeature"] = self.ui.lineEdit_accessibilityFeature.text() 
+        dict_pm["accessibilityHazard"] = self.ui.lineEdit_accessibilityHazard.text()
+        dict_pm["accessibilitySummary"] = self.ui.lineEdit_accessibilitySummary.text()
+        dict_pm["accessModeSufficient"] = self.ui.lineEdit_accessModeSufficient.text()
+        dict_pm["accessMode"] = self.ui.comboBox_accessMode.currentText()
+        
+        dict_pm["author"] = self.ui.lineEdit_author.text()
+        dict_pm["cover"] = self.ui.lineEdit_cover.text()
+        dict_pm["duration"] = self.ui.lineEdit_duration.text()
+        dict_pm["dateModified"] = self.ui.dateTimeEdit_dateModified.dateTime().toString()
+        dict_pm["datePublished"] = self.ui.dateEdit_datePublished.date().toString()
+        dict_pm["id"] = self.ui.lineEdit_id.text()
+        dict_pm["inLanguage"] = self.ui.comboBox_inLanguage.currentText()
+        dict_pm["readBy"] = self.ui.lineEdit_readBy.text()
+        dict_pm["readingProgression"] = self.ui.lineEdit_readingProgression.text()
+        dict_pm["type"] =  'Audiobook'
+        dict_pm["url"] = self.ui.lineEdit_url.text()        
+        
+        return dict_pm
         
         
         

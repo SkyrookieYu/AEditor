@@ -59,6 +59,10 @@ class MainWindow(QMainWindow):
         self.ui.action_Save.triggered.connect(self._save)
         self.ui.action_Close.triggered.connect(self._close)
         self.ui.action_Validate.triggered.connect(self._validate)
+        #self.ui.action_Qt.triggered.connect(self.on_action_Qt_triggered)
+        #self.ui.action_PyQt5.triggered.connect(self.on_action_PyQt5_triggered)
+        
+        
         
         layout = QVBoxLayout(self.ui.tab_Metadata)
         self.publicationManifest = PublicationManifest(self.book.getManifestDict())
@@ -66,9 +70,7 @@ class MainWindow(QMainWindow):
         # layout.setSizeConstraint(QLayout.SetMinimumSize)
         # self.ui.tab_Metadata.setLayout(self.layout)
         
-        layout = QVBoxLayout(self.ui.tab_TOC)
-        self.treeWidget_TOC = TreeWidget_TOC(self.book.getTOCList()) # TOCWidget()
-        layout.addWidget(self.treeWidget_TOC)
+
         
         layout = QVBoxLayout(self.ui.dockWidgetContents)
         self.coverPreviewWidget = CoverPreviewWidget(self.book.getCoverDict(), self.book.getBookDir())
@@ -83,6 +85,11 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(w)
         # self.readingOrderWidget.addItems(3)
         
+        #urlList = self.readingOrderWidget.resortItems()
+        
+        layout = QVBoxLayout(self.ui.tab_TOC)
+        self.treeWidget_TOC = TreeWidget_TOC(self.book.getTOCList()) # TOCWidget()
+        layout.addWidget(self.treeWidget_TOC)        
         
         layout = QVBoxLayout(self.ui.dockWidgetContents_2)
         self.supplementalListWidget = SupplementalListWidget(self.book.getSupplementalList())
@@ -101,6 +108,8 @@ class MainWindow(QMainWindow):
         self._translate = QCoreApplication.translate
 
         self.ui.action_Exit.triggered.connect(self._exit)
+        #self.ui.action_Qt.triggered.connect(self.on_action_Qt_triggered)
+        #self.ui.action_PyQt5.triggered.connect(self.on_action_PyQt5_triggered)
         
         layout = QVBoxLayout(self.ui.tab_Metadata)
         self.publicationManifest = PublicationManifest()
@@ -108,9 +117,7 @@ class MainWindow(QMainWindow):
         # layout.setSizeConstraint(QLayout.SetMinimumSize)
         # self.ui.tab_Metadata.setLayout(self.layout)
         
-        layout = QVBoxLayout(self.ui.tab_TOC)
-        self.treeWidget_TOC = TreeWidget_TOC() # TOCWidget()
-        layout.addWidget(self.treeWidget_TOC)
+
         
         layout = QVBoxLayout(self.ui.dockWidgetContents)
         self.coverPreviewWidget = CoverPreviewWidget()
@@ -123,22 +130,79 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.readingOrderWidget)
         #layout.addStretch(0)      
         self.setCentralWidget(w)
-        self.readingOrderWidget.addItems(3)
+        self.readingOrderWidget.addItems(1)
         
+        layout = QVBoxLayout(self.ui.tab_TOC)
+        self.treeWidget_TOC = TreeWidget_TOC() # TOCWidget()
+        layout.addWidget(self.treeWidget_TOC)        
         
         layout = QVBoxLayout(self.ui.dockWidgetContents_2)
         self.supplementalListWidget = SupplementalListWidget()
         layout.addWidget(self.supplementalListWidget)
         self.supplementalListWidget.addItems(2)
         
+    @pyqtSlot()  
+    def on_action_Qt_triggered(self):
+        QApplication.aboutQt()
+        
+    @pyqtSlot()    
+    def on_action_PyQt5_triggered(self):
+        QApplication.aboutPyQt5()
+        
         
     def _exit(self):
         self.signal_exit.emit()
         
     def _save(self):
+        # Todo
+        
+        manifest = self.publicationManifest.save()
+        
+        
+        toc = self.treeWidget_TOC.save()
+        
+        
+        
+        cover = self.coverPreviewWidget.save()
+        
+        
+        readingOrder = self.readingOrderWidget.save()
+        
+        
+        supplementalList = self.supplementalListWidget.save()
+        
+        print(manifest)
+        self.book.setManifestDict(manifest)
+        
+        print(readingOrder)
+        self.book.setReadingOrderList(readingOrder)
+        
+        
+        print(toc)
+        self.book.setTOCList(toc)
+        
+        print(cover)
+        self.book.setCoverDict(cover)
+        
+        print(supplementalList)
+        self.book.setSupplementalList(supplementalList)
+        
         self.book.on_action_Save_Audiobook_triggered()
 
+    def refreshToc():
+        tocList = []
+        
+        return tocList
+    
+    def refreshManifest():
+        
+        return {}
+    
     def _close(self):
+        '''
+        toc_refreshed = refreshToc()
+        manifest_refreshed = refreshManifest()
+        '''
         self.book.on_action_Save_Audiobook_triggered()
         
     def _validate(self):
@@ -162,3 +226,4 @@ class MainWindow(QMainWindow):
             if ret:
                 print("Congratulations!")        
         '''
+        

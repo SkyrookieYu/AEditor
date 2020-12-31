@@ -10,6 +10,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from multipledispatch import dispatch 
+from book import Audiobook
+
 
 class TreeWidget_TOC(QMainWindow):
     
@@ -36,6 +38,8 @@ class TreeWidget_TOC(QMainWindow):
         self.treeWidget.setHeaderLabels(HEADERS)
  
         ## Set Columns Width to match content:
+
+        #urlList = self.readingOrderWidget.resortItems()
         for column in range(self.treeWidget.columnCount()):
             self.treeWidget.resizeColumnToContents(column)
             
@@ -185,6 +189,10 @@ class TreeWidget_TOC(QMainWindow):
             else:
                 self._TOCList.append({"level" : level, "href" : item.comboBox.currentText(), "title" : item.lineEdit.text(), "children" : serchChildItem(item, level + 1)})
         print(self._TOCList)
+        
+    def save(self):
+        self.on_traverseTreeAction_triggered()
+        return self._TOCList
 
     '''
     e.g., 
@@ -194,6 +202,9 @@ class TreeWidget_TOC(QMainWindow):
     # https://blog.csdn.net/lly1122334/article/details/103040110 : dict
     def on_generateTreeAction_triggered(self, data, root = None):
         self.treeWidget.clear()
+        book = Audiobook.getInstance()
+        rol = book.getReadingOrderList()
+        
         
         def addChildItem(data, level, parentItem):
             children = data['children']
@@ -204,11 +215,17 @@ class TreeWidget_TOC(QMainWindow):
                 lvl = child['level']
                 if lvl == level:
                     item = CustomTreeItem(parentItem)
+                    
+                    for roi in rol:
+                        item.comboBox.addItem(roi["url"])
+                        
                     href = child["href"]
                     indexOfSharpSign = href.find('#t=')
                     if indexOfSharpSign == -1: # Not in
-                        pass
+                        item.comboBox.setCurrentText(href)
+                        
                     else:
+                        item.comboBox.setCurrentText(href[0 : indexOfSharpSign])
                         timeStamp = href[indexOfSharpSign + 3:]
                         [startTime, endTime] = timeStamp.split(',')
                         item.lineEdit_Start.setText(startTime)
@@ -225,11 +242,17 @@ class TreeWidget_TOC(QMainWindow):
                 if level == 0:
                     item = CustomTreeItem(self.treeWidget)
                     # item.comboxBox = 
+                    for roi in rol:
+                        item.comboBox.addItem(roi["url"])
+                        
                     href = dict_TOC["href"]
                     indexOfSharpSign = href.find('#t=')
                     if indexOfSharpSign == -1: # Not in
-                        pass
+                        #if href in urlList:
+                        item.comboBox.setCurrentText(href)
                     else:
+                        #if href in urlList:
+                        item.comboBox.setCurrentText(href[0 : indexOfSharpSign])
                         timeStamp = href[indexOfSharpSign + 3:]
                         [startTime, endTime] = timeStamp.split(',')
                         item.lineEdit_Start.setText(startTime)
@@ -264,9 +287,11 @@ class CustomTreeItem(QTreeWidgetItem):
         ## Column 0 - Text:
         # self.setText(0, name )
         self.comboBox = QComboBox()
+        '''
         self.comboBox.addItem("1")
         self.comboBox.addItem(" 2")
         self.comboBox.addItem("  3")
+        '''
         self.comboBox.setContextMenuPolicy(Qt.CustomContextMenu)
         self.comboBox.customContextMenuRequested.connect(lambda point: self.on_customContextMenuRequested_triggered(self.comboBox.mapToParent(point)))
         self.treeWidget().setItemWidget(self, 0, self.comboBox)        
@@ -315,6 +340,9 @@ class CustomTreeItem(QTreeWidgetItem):
         Return value (1nd column)
         '''
         return self.lineEdit.text() 
+    
+
+        
     
     def on_customContextMenuRequested_triggered(self, point):
         print("on_menuContext")

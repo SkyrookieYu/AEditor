@@ -104,9 +104,7 @@ class Audiobook(QObject):
     <body>
         <nav role=\"doc-toc\">
             <h1>{}</h1>
-            <ol>
 {}
-            </ol>
         </nav>
     </body>
 </html>"""
@@ -131,9 +129,7 @@ class Audiobook(QObject):
     <body>
         <nav role=\"doc-toc\">
             <h1>{}</h1>
-            <ol>
 {}
-            </ol>
         </nav>
     </body>
 </html>"""  
@@ -148,9 +144,7 @@ class Audiobook(QObject):
     <body>
         <nav role=\"doc-toc\">
             <h1>{}</h1>
-            <ol>
 {}
-            </ol>
         </nav>
     </body>
 </html>"""
@@ -163,9 +157,7 @@ class Audiobook(QObject):
     <body>
         <nav role=\"doc-toc\">
             <h1>{}</h1>
-            <ol>
 {}
-            </ol>
         </nav>
     </body>
 </html>"""     
@@ -174,9 +166,19 @@ class Audiobook(QObject):
     _instance = None
     
     @staticmethod
+    @dispatch(str)
     def getInstance(item_Open):
         if Audiobook._instance is None:
             Audiobook(item_Open)
+        return Audiobook._instance
+    
+    @staticmethod
+    @dispatch()
+    def getInstance():
+        '''
+        if Audiobook._instance is None:
+            Audiobook()
+        '''
         return Audiobook._instance
     
     '''
@@ -317,6 +319,7 @@ class Audiobook(QObject):
                                         'readingOrder', 
                                         'resources']
         
+        
         if os.path.isdir(item_Open):  
             print("It is a directory")  
             self._is_LPF = False
@@ -377,12 +380,34 @@ class Audiobook(QObject):
     
     def getID(self):
         return self._id
+
+    def setManifestDict(self, m):
+        self._MANIFEST = m
     
     def getManifestDict(self):
         return self._MANIFEST
+    
+    def getTOCFile(self):
+        return self._TOC_File
+
+    def setTOCList(self, t):
+        self._TOC_List = t
 
     def getTOCList(self):
         return self._TOC_List
+    
+    def setCoverDict(self, dict_Cover):
+        if self._MANIFEST.get("resources") is None:
+            self._MANIFEST["resources"] = [dict_Cover] 
+            return
+        
+        for i in len(self._MANIFEST["resources"]):
+            if self._MANIFEST["resources"][i].get("rel") is not None and self._MANIFEST["resources"][i].get("rel") == "cover":
+                self._MANIFEST["resources"].remove(i)
+                break
+        self._MANIFEST["resources"].append(dict_Cover)        
+
+            
     
     def getCoverDict(self):
         if 'resources' in self.getManifestDict():
@@ -391,6 +416,17 @@ class Audiobook(QObject):
                     return item
         return {}  
     
+    def setSupplementalList(self, sList):  
+        if self._MANIFEST.get("resources") is None:
+            self._MANIFEST["resources"] = sList 
+            return
+        
+        # self._MANIFEST["resources"] = []
+        for s in sList:
+            self._MANIFEST["resources"].append(s)
+        
+        
+        
     def getSupplementalList(self):
         slist = []
         if 'resources' in self.getManifestDict():
@@ -404,6 +440,9 @@ class Audiobook(QObject):
                 else:
                     slist.append(item)
         return slist    
+
+    def setReadingOrderList(self, rList):
+        self._MANIFEST["readingOrder"] = rList
     
     def getReadingOrderList(self):
         if 'readingOrder' in self.getManifestDict():
@@ -433,6 +472,8 @@ class Audiobook(QObject):
             return
         else:
             self.saveIntoDirectory(self.getBookDir())
+            
+            
             return
     
     def checkResources(self):
@@ -458,6 +499,21 @@ class Audiobook(QObject):
         return errorList
                                     
     def saveIntoDirectory(self, directory = None):
+        def getTOCBlock(data, level = 0):
+            fullTOCString = '\t' * (3 + level*2) + "<ol>\n"
+            for i in range(len(data)):
+                dict_TOC = data[i]
+                lvl = dict_TOC["level"]
+                href = dict_TOC["href"]
+                title = dict_TOC["title"]
+                fullTOCString += '\t' * (3 + level*2 + 1) + '<li><a href=\"' + href + '\">' + title + '</a></li>\n'              
+                if dict_TOC["children"] != []:
+                    fullTOCString += writeTOC(dict_TOC["children"], level + 1)
+                else:
+                    pass
+            fullTOCString += '\t' * (3 + level*2) + "</ol>"
+            return fullTOCString
+        
         print('saveIntoDirectory')
         errorList = self.checkResources()
         if not errorList:
@@ -470,15 +526,12 @@ class Audiobook(QObject):
         if self._optionNo == 1:
             print("self._optionNo = 1")
             fullManifestContent = ""
-            fullTOCContent = ""
-            for url, value in self._TOC_List:
-                print(url, " = ", value)
-                fullTOCContent = fullTOCContent + \
-                    "\t\t\t\t<li><a href=\"" + url + "\">" + \
-                    value + \
-                    "</a></li>\n"
-                    
-            fullTOCContent = fullTOCContent[:-1] 
+            data = self.getTOCList()
+            tocString = getTOCBlock(data, 0)
+            
+            metadata = self.getgetManifestDict()
+            
+            
             """
             <meta name=\"stylesheet\" src=\"{}\">
             """
@@ -491,7 +544,7 @@ class Audiobook(QObject):
                                                     self._MANIFEST_ID,
                                                     json.dumps(self._MANIFEST, indent=4), # json.dumps(self.__MANIFEST)
                                                     self._Booktitle,
-                                                    fullTOCContent)
+                                                    tocString)
             print(fullHTMLContent)
             with open(directory + "\\" + "index.html", "w", encoding="utf-8") as f:
             # 将爬取的页面              
@@ -513,22 +566,17 @@ class Audiobook(QObject):
             # 将爬取的页面              
                 f.write(fullPEPContent)
                 
-            li_tags = ""
-            for url, value in self._TOC_List:
-                print(url, " = ", value)
-                li_tags = li_tags + \
-                    "\t\t\t\t<li><a href=\"" + url + "\">" + \
-                    value + \
-                    "</a></li>\n"
-                    
-            li_tags = li_tags[:-1]    
+            data = self.getTOCList()
+            tocString = getTOCBlock(data, 0)
+            
             fullTOCContent = self._TOC_OPTION_2.format(self._Booktitle,
-                                                       li_tags)
+                                                       tocString)
             
             with open(directory + "\\" + self._TOC_File, "w", encoding="utf-8") as f:
             # 将爬取的页面              
                 f.write(fullTOCContent)            
             
+            self._MANIFEST["resources"].append({"type" : "LinkedResource", "encodingFormat": "text/html", "name":"Table of Contents", "rel": "contents", "url": self.getTOCFile() or "toc.html"})
             with open(directory + "\\" + self._MANIFEST_File, "w", encoding="utf-8") as f:
             # 将爬取的页面              
                 f.write(json.dumps(self._MANIFEST, indent=4))                
@@ -537,17 +585,14 @@ class Audiobook(QObject):
             
         elif self._optionNo == 3:
             print("self._optionNo = 3")
-
-            li_tags = ""
-            for url, value in self._CSS_File_List:
-                print(url, " = ", value)
-                li_tags = li_tags + \
-                    "\t\t\t\t<li><a href=\"" + url + "\">" + \
-                    value + \
-                    "</a></li>\n"
-                    
-            li_tags = li_tags[:-1]    
             
+            
+            
+            
+            data = self.getTOCList()
+            tocString = getTOCBlock(data, 0)
+              
+                
             # fullPEPContent = ""
             fullCSSContent = ""
             for css in self._CSS_File_List:
@@ -556,12 +601,18 @@ class Audiobook(QObject):
                                                        fullCSSContent,
                                                        self._MANIFEST_File, # json.dumps(self.__MANIFEST)
                                                        self._Booktitle,
-                                                       li_tags)
+                                                       tocString)
             
             with open(directory + "\\" + "index.html", "w", encoding="utf-8") as f:
             # 将爬取的页面              
                 f.write(fullPEPContent)
-                
+            # Todo
+            '''
+            data = self.getManifestDict()
+            manifestString = getManifestBlock
+            '''
+            
+            
             with open(directory + "\\" + self._MANIFEST_File, "w", encoding="utf-8") as f:
             # 将爬取的页面              
                 f.write(json.dumps(self._MANIFEST, indent=4))               
@@ -571,17 +622,12 @@ class Audiobook(QObject):
         elif self._optionNo == 4:
             print("self._optionNo = 4")   
             
-            li_tags = ""
-            for url, value in self._TOC_List:
-                print(url, " = ", value)
-                li_tags = li_tags + \
-                    "\t\t\t\t<li><a href=\"" + url + "\">" + \
-                    value + \
-                    "</a></li>\n"
-                    
-            li_tags = li_tags[:-1]    
+            
+            data = self.getTOCList()
+            tocString = getTOCBlock(data, 0)
+            
             fullTOCContent = self._TOC_OPTION_4.format(self._Booktitle,
-                                                       li_tags)
+                                                       tocString)
             
             with open(directory + "\\" + self._TOC_File, "w", encoding="utf-8") as f:
             # 将爬取的页面              

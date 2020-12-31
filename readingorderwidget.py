@@ -5,6 +5,7 @@ Created on Sun Dec 20 00:18:39 2020
 @URL: https://github.com/SkyrookieYu/AEditor
 """
 
+import os
 import sys
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -14,6 +15,7 @@ from ui_readingorderitem import Ui_ReadingOrderItem
 # from mimetypes import MimeTypes
 import filetype
 from multipledispatch import dispatch
+from book import Audiobook
 
 class ReadingOrderItem(QWidget):
     
@@ -70,6 +72,8 @@ class ReadingOrderItem(QWidget):
         
     
 class ReadingOrderWidget(QWidget):
+    
+    signal_duration_calculated = pyqtSignal(float)
     
     @dispatch(list, str)    
     def __init__(self, rList, bookDir, width=400, height=130):
@@ -137,6 +141,7 @@ class ReadingOrderWidget(QWidget):
         
         self.retranslateUi(ReadingOrderWidget)      
         
+        seconds_Duration = 0.0
         for r in rList:
             if isinstance(r, dict):
                 url = r.get("url", "")
@@ -152,12 +157,33 @@ class ReadingOrderWidget(QWidget):
                     roi.ui.radioButton_URL.setChecked(True)
                     roi.ui.lineEdit_URL.setText(url)
                     roi.ui.lineEdit_file.setText("")
+                    
+                    filename, file_extension = os.path.splitext(url)
+                    if file_extension == ".mp3":
+                        roi.ui.lineEdit_duration.setText(r.get("duration", ""))  
+                        pass
+                   
+  
+                            
+                            
                 else:
                     roi.ui.radioButton_file.setChecked(True)
                     roi.ui.lineEdit_file.setText(url)
                     roi.ui.lineEdit_URL.setText("")
+                    
+                    kind = filetype.guess(bookDir + r'/' + url)
+                    if kind is None:
+                        print('Cannot guess file type!')
+                    else:    
+                        print('File extension: %s' % kind.extension)
+                        print('File MIME type: %s' % kind.mime)
+                        if kind.extension == ".mp3" and kind.mime.beginswith("audio"):
+                            duration = Helper.getMP3Duration(bookDir + r'/' + url)
+                            roi.ui.lineEdit_duration.setText("PT" + str(duration) + "S")    
+                            seconds_Duration += duration
                         
-                roi.ui.lineEdit_duration.setText(r.get("duration", ""))    
+                
+                # roi.ui.lineEdit_duration.setText(r.get("duration", ""))    
                 roi.ui.lineEdit_title.setText(r.get("name", ""))   
                 
                 self.listWidget.addItem(item)
@@ -179,6 +205,13 @@ class ReadingOrderWidget(QWidget):
                     roi.ui.radioButton_URL.setChecked(True)
                     roi.ui.lineEdit_URL.setText(url)
                     roi.ui.lineEdit_file.setText("")
+                    
+                    filename, file_extension = os.path.splitext(url)
+                    if file_extension == ".mp3":
+                        # roi.ui.lineEdit_duration.setText("PT" + str(duration) + "S") 
+                        pass                    
+                    
+                    
                 else:
                     roi.ui.radioButton_file.setChecked(True)
                     roi.ui.lineEdit_file.setText(url)
@@ -193,12 +226,13 @@ class ReadingOrderWidget(QWidget):
                         if kind.extension == ".mp3" and kind.mime.beginswith("audio"):
                             duration = Helper.getMP3Duration(bookDir + r'/' + url)
                             roi.ui.lineEdit_duration.setText("PT" + str(duration) + "S")    
-                                       
+                            seconds_Duration += duration
+                            
                 self.listWidget.addItem(item)
                 self.listWidget.setItemWidget(item, roi)
                 self.__listWidgetItemSerialNo += 1    
     
-    
+        self.signal_duration_calculated.emit(seconds_Duration)
     
     
     
@@ -269,8 +303,9 @@ class ReadingOrderWidget(QWidget):
         self.pushButton_Add.clicked.connect(self.addItems)
         self.pushButton_Remove.clicked.connect(self.removeSelectedItems)
         
-        self.retranslateUi(ReadingOrderWidget)        
-   
+        self.retranslateUi(ReadingOrderWidget)    
+        
+           
     def retranslateUi(self, ReadingOrderWidget):
         _translate = QCoreApplication.translate
         self.setWindowTitle(_translate("ReadingOrderWidget", "ReadingOrderWidget"))
@@ -314,8 +349,75 @@ class ReadingOrderWidget(QWidget):
         print("item[{}] = {} * {}".format(serialNo, width, height))
         
     def resortItems(self):
+        urls = []
         for i in range(self.listWidget.count()):
             self.listWidget.item(i).setText(str(i))
+            item = self.listWidget.itemWidget(self.listWidget.item(i))
+            if item.ui.radioButton_URL.isChecked():
+                
+                if item.ui.lineEdit_URL.text() in urls:
+                    pass
+                else:
+                    urls.append(item.ui.lineEdit_URL.text())
+            else:
+                href = item.ui.lineEdit_file.text()
+                indexOfSharpSign = href.find('#t=')
+                if indexOfSharpSign == -1: # Not in
+                    pass
+                else:
+                    realHref = href[0 : indexOfSharpSign]
+                    
+                    if realHref in urls:
+                        pass
+                    else:
+                        urls.append(realHref)                   
+                    
+        return urls           
+
+            
+            
+            
+            
+    def save(self):
+        readingOrderList = []
+        seconds_Duration = 0.0
+        
+        for i in range(self.listWidget.count()):
+            # item = self.listWidget.item(i)
+            item = self.listWidget.itemWidget(self.listWidget.item(i))
+            if item.ui.radioButton_URL.isChecked():
+                url = item.ui.lineEdit_URL.text()
+                
+                filename, file_extension = os.path.splitext(url)
+                if file_extension == ".mp3":
+                    if item.ui.lineEdit_duration.text() != "": 
+                        duration = item.ui.lineEdit_duration.text()
+                    else: 
+                        duration = "PT0S"
+                    readingOrderList.append({"url" : url, "encodingFormat" : 'audio/mpeg', "name" : item.ui.lineEdit_title.text(), "duration" : duration})
+                    pass   
+                
+            else:
+                url = item.ui.lineEdit_file.text()
+                
+                kind = filetype.guess(url)
+                
+                #kind = filetype.guess(bookDir + r'/' + url)
+                if kind is None:
+                    print('Cannot guess file type!')
+                else:    
+                    print('File extension: %s' % kind.extension)
+                    print('File MIME type: %s' % kind.mime)
+                    if kind.extension == ".mp3" and kind.mime.beginswith("audio"):
+                        duration = Helper.getMP3Duration(url)
+                        roi.ui.lineEdit_duration.setText("PT" + str(duration) + "S")    
+                        seconds_Duration += duration
+                        readingOrderList.append({"url" : url, "encodingFormat" : kind.mime, "name" : item.ui.lineEdit_title.text(), "duration" : "PT" + str(duration) + "S"})
+                        
+        return readingOrderList    
+              
+        
+        
   
 
 if __name__ == "__main__":
