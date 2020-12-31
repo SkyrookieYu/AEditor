@@ -315,7 +315,8 @@ class SupplementalListWidget(QWidget):
                 if file_extension == ".mp3":
 
                     supplementalList.append({"url" : url, "encodingFormat" : 'audio/mpeg'})
-                    pass   
+                else:
+                    supplementalList.append({"url" : url})
                 
             else:
                 url = item.ui.lineEdit_file.text()
@@ -325,6 +326,7 @@ class SupplementalListWidget(QWidget):
                 
                 if kind is None:
                     print('Cannot guess file type!')
+                    supplementalList.append({"url" : url})
                 else:    
                     print('File extension: %s' % kind.extension)
                     print('File MIME type: %s' % kind.mime)
