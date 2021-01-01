@@ -41,7 +41,7 @@ class CoverPreviewWidget(QWidget):
         self.ui.buttonGroup.buttonClicked[int].connect(self.on_button_clicked)
         # self._translate = QCoreApplication.translate    
         url = dict_Cover.get("url", "")
-        if url == "":
+        if url == "" or url.endswith(".html"): # bypass .html cover
             self.ui.pushButton_Add.setEnabled(True)
         else:
             try:

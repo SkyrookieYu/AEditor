@@ -83,6 +83,9 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.readingOrderWidget)
         #layout.addStretch(0)      
         self.setCentralWidget(w)
+        
+        # self.readingOrderWidget.signal_duration_calculated.connect(self.publicationManifest.onDurationChanged)
+        
         # self.readingOrderWidget.addItems(3)
         
         #urlList = self.readingOrderWidget.resortItems()
@@ -132,6 +135,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(w)
         self.readingOrderWidget.addItems(1)
         
+       
         layout = QVBoxLayout(self.ui.tab_TOC)
         self.treeWidget_TOC = TreeWidget_TOC() # TOCWidget()
         layout.addWidget(self.treeWidget_TOC)        
@@ -149,7 +153,9 @@ class MainWindow(QMainWindow):
     def on_action_PyQt5_triggered(self):
         QApplication.aboutPyQt5()
         
-        
+
+    
+    
     def _exit(self):
         self.signal_exit.emit()
         

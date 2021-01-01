@@ -152,7 +152,7 @@
               <property name="geometry">
                <rect>
                 <x>0</x>
-                <y>0</y>
+                <y>-319</y>
                 <width>600</width>
                 <height>900</height>
                </rect>
@@ -361,12 +361,32 @@
                 </widget>
                </item>
                <item row="19" column="0">
-                <widget class="QDateTimeEdit" name="dateTimeEdit_dateModified"/>
+                <widget class="QDateTimeEdit" name="dateTimeEdit_dateModified">
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                 <property name="displayFormat">
+                  <string>yyyy-MM-ddThh:mm:ssZ</string>
+                 </property>
+                </widget>
                </item>
                <item row="20" column="0">
                 <widget class="QLabel" name="label_datePublished">
                  <property name="text">
                   <string>datePublished</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="21" column="0">
+                <widget class="QDateEdit" name="dateEdit_datePublished">
+                 <property name="displayFormat">
+                  <string>yyyy-MM-dd</string>
+                 </property>
+                 <property name="currentSectionIndex">
+                  <number>0</number>
+                 </property>
+                 <property name="timeSpec">
+                  <enum>Qt::LocalTime</enum>
                  </property>
                 </widget>
                </item>
@@ -386,50 +406,6 @@
                   <string>inLanguage (publication language)</string>
                  </property>
                 </widget>
-               </item>
-               <item row="26" column="0">
-                <widget class="QLabel" name="label_readBy">
-                 <property name="text">
-                  <string>readBy</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="27" column="0" colspan="2">
-                <widget class="QLineEdit" name="lineEdit_readBy"/>
-               </item>
-               <item row="28" column="0">
-                <widget class="QLabel" name="label_readingProgression">
-                 <property name="text">
-                  <string>readingProgression</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="29" column="0" colspan="2">
-                <widget class="QLineEdit" name="lineEdit_readingProgression"/>
-               </item>
-               <item row="30" column="0">
-                <widget class="QLabel" name="label_type">
-                 <property name="text">
-                  <string>type</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="31" column="0" colspan="2">
-                <widget class="QLineEdit" name="lineEdit_type">
-                 <property name="text">
-                  <string>CreativeWork</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="32" column="0">
-                <widget class="QLabel" name="label_url">
-                 <property name="text">
-                  <string>url (address)</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="33" column="0" colspan="2">
-                <widget class="QLineEdit" name="lineEdit_url"/>
                </item>
                <item row="25" column="0" colspan="2">
                 <widget class="QComboBox" name="comboBox_inLanguage">
@@ -626,15 +602,60 @@
                  </item>
                 </widget>
                </item>
-               <item row="21" column="0">
-                <widget class="QDateEdit" name="dateEdit_datePublished">
-                 <property name="currentSectionIndex">
-                  <number>0</number>
-                 </property>
-                 <property name="timeSpec">
-                  <enum>Qt::LocalTime</enum>
+               <item row="26" column="0">
+                <widget class="QLabel" name="label_readBy">
+                 <property name="text">
+                  <string>readBy</string>
                  </property>
                 </widget>
+               </item>
+               <item row="27" column="0" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_readBy"/>
+               </item>
+               <item row="28" column="0">
+                <widget class="QLabel" name="label_readingProgression">
+                 <property name="text">
+                  <string>readingProgression</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="29" column="0" colspan="2">
+                <widget class="QComboBox" name="comboBox_readingProgression">
+                 <item>
+                  <property name="text">
+                   <string>ltr</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>rtl</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="30" column="0">
+                <widget class="QLabel" name="label_type">
+                 <property name="text">
+                  <string>type</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="31" column="0" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_type">
+                 <property name="text">
+                  <string>Audiobook</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="32" column="0">
+                <widget class="QLabel" name="label_url">
+                 <property name="text">
+                  <string>url (address)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="33" column="0" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_url"/>
                </item>
               </layout>
              </widget>

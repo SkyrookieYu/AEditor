@@ -84,16 +84,7 @@ class Controller(QObject):
         if hasattr(self, 'newBookWizard'):
             self.newBookWizard.close()
         self.mainWindow.show()
-     
-    '''
-    def show_Groups(self):
-        self.groups = Groups()
-        # self.groups.signal_exit.connect(self.exit)
-        if hasattr(self, 'mainWindow'):
-            self.mainWindow.close()
-        self.groups.show()
-    '''    
-        
+            
     def exit(self):
         print("exit")
         self.mainWindow.close()

@@ -49,12 +49,20 @@ class PublicationManifest(QWidget):
         self.ui.lineEdit_author.setText(manifestDict.get("author", ""))
         self.ui.lineEdit_cover.setText(manifestDict.get("cover", ""))
         self.ui.lineEdit_duration.setText(manifestDict.get("duration", ""))
+        
+        print( "dateModified = " + manifestDict.get("dateModified", ""))
+        dt = QDateTime.fromString("2020-12-15 22:00:30")
+        print( "dateModified = " + dt.toString("yyyy-MM-dd hh:mm:ss"))
+        
         self.ui.dateTimeEdit_dateModified.setDateTime(QDateTime.fromString(manifestDict.get("dateModified", "")))
-        self.ui.dateEdit_datePublished.setDate(QDate.fromString(manifestDict.get("datePublished", "2000-1-1")))
+        
+        #date = QDate.fromString(manifestDict.get("datePublished", "1900-1-1"), "yyyy-MM-dd")
+        
+        self.ui.dateEdit_datePublished.setDate(QDate.fromString(manifestDict.get("datePublished", "1900-1-1"), "yyyy-MM-dd"))
         self.ui.lineEdit_id.setText(manifestDict.get("id", ""))
-        #manifestDict.get("inLanguage", ""))
+        self.ui.comboBox_inLanguage.setCurrentText(manifestDict.get("inLanguage", "ZH-TW"))
         self.ui.lineEdit_readBy.setText(manifestDict.get("readBy", ""))
-        self.ui.lineEdit_readingProgression.setText(manifestDict.get("readingProgression", ""))
+        self.ui.comboBox_readingProgression.setCurrentText(manifestDict.get("readingProgression", ""))
         self.ui.lineEdit_type.setText(manifestDict.get("type", "CreativeWork"))
         self.ui.lineEdit_url.setText(manifestDict.get("url", ""))
         
@@ -84,11 +92,20 @@ class PublicationManifest(QWidget):
         dict_pm["id"] = self.ui.lineEdit_id.text()
         dict_pm["inLanguage"] = self.ui.comboBox_inLanguage.currentText()
         dict_pm["readBy"] = self.ui.lineEdit_readBy.text()
-        dict_pm["readingProgression"] = self.ui.lineEdit_readingProgression.text()
+        dict_pm["readingProgression"] = self.ui.comboBox_readingProgression.currentText()
         dict_pm["type"] =  'Audiobook'
         dict_pm["url"] = self.ui.lineEdit_url.text()        
         
         return dict_pm
+    
+    # @pyqtSlot(float)
+    def onDurationChanged(self, f):
+        duration = float("{:.2f}".format(f))
+        print("onDurationChanged : duration = " + str(duration))
+        
+        self.ui.lineEdit_duration.setText("PT" + duration + "S")
+        
+        
         
         
         

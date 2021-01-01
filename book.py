@@ -435,6 +435,9 @@ class Audiobook(QObject):
                     continue
                 elif item.get("name") is not None and item.get("name") == "Primary Entry Page":
                     continue
+                elif item.get("rel") is not None and item.get("rel") == "contents" and \
+                    item.get("url") is not None and item.get("url") == "index.html":
+                    continue
                 elif item.get("name") is not None and item.get("name") == "Table of Contents":
                     continue
                 else:
@@ -523,7 +526,7 @@ class Audiobook(QObject):
         if directory is None:
             directory = self._BOOK_DIR
         
-        if self._optionNo == 1:
+        if self._optionNo == 1: # self._PEP_File and not self._TOC_File and not self._MANIFEST_File
             print("self._optionNo = 1")
             fullManifestContent = ""
             data = self.getTOCList()
@@ -538,6 +541,8 @@ class Audiobook(QObject):
             fullCSSContent = ""
             for css in self._CSS_File_List:
                 fullCSSContent += '<meta name=\"stylesheet\" src=\"{}\">'.format(css)
+                
+            self._MANIFEST["resources"].append({"url": "index.html", "encodingFormat": "text/html", "name": "Primary Entry Page", "rel": "contents"})    
             fullHTMLContent = self._PEP_OPTION_1.format(self._Booktitle, 
                                                     fullCSSContent, 
                                                     self._MANIFEST_ID,
@@ -550,7 +555,7 @@ class Audiobook(QObject):
             # 将爬取的页面              
                 f.write(fullHTMLContent)
 
-        elif self._optionNo == 2:
+        elif self._optionNo == 2: #
             print("self._optionNo = 2")
             
             # fullManifestContent = ""
@@ -577,6 +582,7 @@ class Audiobook(QObject):
                 f.write(fullTOCContent)            
             
             self._MANIFEST["resources"].append({"type" : "LinkedResource", "encodingFormat": "text/html", "name":"Table of Contents", "rel": "contents", "url": self.getTOCFile() or "toc.html"})
+            self._MANIFEST["resources"].append({"url": "index.html", "encodingFormat": "text/html", "name": "Primary Entry Page", "rel": "contents"})    
             with open(directory + "\\" + self._MANIFEST_File, "w", encoding="utf-8") as f:
             # 将爬取的页面              
                 f.write(json.dumps(self._MANIFEST, indent=4))                
@@ -612,7 +618,7 @@ class Audiobook(QObject):
             manifestString = getManifestBlock
             '''
             
-            
+            self._MANIFEST["resources"].append({"url": "index.html", "encodingFormat": "text/html", "name": "Primary Entry Page", "rel": "contents"})    
             with open(directory + "\\" + self._MANIFEST_File, "w", encoding="utf-8") as f:
             # 将爬取的页面              
                 f.write(json.dumps(self._MANIFEST, indent=4))               
@@ -633,7 +639,7 @@ class Audiobook(QObject):
             # 将爬取的页面              
                 f.write(fullTOCContent)               
             
-            
+            self._MANIFEST["resources"].append({"type" : "LinkedResource", "encodingFormat": "text/html", "name":"Table of Contents", "rel": "contents", "url": self.getTOCFile() or "toc.html"})           
             with open(directory + "\\" + self._MANIFEST_File, "w", encoding="utf-8") as f:
             # 将爬取的页面              
                 f.write(json.dumps(self._MANIFEST, indent=4))               

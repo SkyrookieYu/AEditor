@@ -331,8 +331,6 @@ class SupplementalListWidget(QWidget):
                     print('File extension: %s' % kind.extension)
                     print('File MIME type: %s' % kind.mime)
                     if kind.extension == ".mp3" and kind.mime.beginswith("audio"):
-                        duration = Helper.getMP3Duration(url)
-                        roi.ui.lineEdit_duration.setText("PT" + str(duration) + "S")    
                         supplementalList.append({"url" : url, "encodingFormat" : kind.mime})
                         
         return supplementalList
